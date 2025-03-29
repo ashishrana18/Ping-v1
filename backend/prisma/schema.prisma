@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  password     String
+  refreshToken String?
+  avatar       String? // Profile picture URL
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  messages Message[]
+  chats    ChatMember[]
+}
+
+model Chat {
+  id        String   @id @default(cuid())
+  isGroup   Boolean  @default(false) // False for 1-on-1, True for group chat
+  name      String? // Group name (null for 1-on-1)
+  createdAt DateTime @default(now())
+  avatar    String? // Group picture URL
+
+  messages Message[]
+  members  ChatMember[]
+}
+
+model ChatMember {
+  id       String   @id @default(cuid())
+  userId   String
+  chatId   String
+  nickname String?
+  joinedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  chat Chat @relation(fields: [chatId], references: [id])
+
+  @@unique([userId, chatId]) // Ensures a user is in a chat only once
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  text      String?
+  senderId  String
+  chatId    String
+  createdAt DateTime @default(now())
+
+  sender User @relation(fields: [senderId], references: [id])
+  chat   Chat @relation(fields: [chatId], references: [id])
+}
