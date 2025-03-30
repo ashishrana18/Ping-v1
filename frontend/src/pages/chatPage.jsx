@@ -1,74 +1,8 @@
-// // src/pages/ChatPage.jsx
-// import { useContext, useEffect } from "react";
-// import { useNavigate, useLocation } from "react-router-dom";
-// import { AuthContext } from "../services/authContext.jsx";
-// import api from "../services/api.js";
-// import AllChats from "../components/chat/allChats.jsx";
-// import SingleChat from "../components/chat/singleChat.jsx";
-// import ChatNavbar from "../components/chat/chatNavbar.jsx";
-
-// function ChatPage() {
-//   const navigate = useNavigate();
-//   const location = useLocation();
-//   const { user, setUser, loading } = useContext(AuthContext);
-
-//   useEffect(() => {
-//     if (!loading && !user) {
-//       navigate("/");
-//     }
-//   }, [user, loading, navigate]);
-
-//   // Get active chat from location state if available
-//   const activeChat = location.state?.chat;
-//   const friendName = location.state?.friend;
-
-//   return (
-//     <div className="h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-//       {/* Fixed header */}
-//       <header className="sticky top-0 z-10 bg-white dark:bg-gray-900 p-4 flex justify-between items-center border-b">
-//         <h1 className="text-xl font-bold">Ping</h1>
-//         <button
-//           onClick={() => {
-//             api.get("/auth/logout");
-//             setUser(null);
-//             navigate("/");
-//           }}
-//           className="p-2 border rounded"
-//         >
-//           Logout
-//         </button>
-//       </header>
-//       {/* Main content area */}
-//       <div className="flex h-screen overflow-hidden">
-//         {/* Sidebar for AllChats */}
-//         <div className="w-[300px] flex-shrink-0 border-r overflow-y-auto">
-//           <AllChats />
-//         </div>
-//         {/* Chat area */}
-//         <div className="flex flex-col flex-grow h-full">
-//           {activeChat ? (
-//             <>
-//               <ChatNavbar chat={activeChat} friend={friendName} />
-//               <SingleChat chat={activeChat} />
-//             </>
-//           ) : (
-//             <div className="flex flex-grow items-center justify-center">
-//               <p>Select or create a chat to view messages.</p>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default ChatPage;
-
 // src/pages/ChatPage.jsx
 import { useContext, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../services/authContext.jsx";
-import api from "../services/api.js";
+import Header from "../components/chat/header.jsx";
 import AllChats from "../components/chat/AllChats.jsx";
 import SingleChat from "../components/chat/SingleChat.jsx";
 import ChatNavbar from "../components/chat/ChatNavbar.jsx";
@@ -76,7 +10,7 @@ import ChatNavbar from "../components/chat/ChatNavbar.jsx";
 function ChatPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, setUser, loading } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -89,28 +23,7 @@ function ChatPage() {
 
   return (
     <div className="h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-      {/* Fixed header */}
-      <header className="sticky top-0 z-10 p-4 border-b bg-white dark:bg-gray-800 flex justify-between items-center">
-        <button
-          className="text-xl font-bold onClick"
-          onClick={() => {
-            navigate("/chat", { state: {} });
-          }}
-        >
-          Ping
-        </button>
-        <button
-          onClick={() => {
-            api.get("/auth/logout");
-            setUser(null);
-            navigate("/");
-          }}
-          className="p-2 border rounded"
-        >
-          Logout
-        </button>
-      </header>
-
+      <Header />
       {/* Main content area */}
       <div className="flex flex-grow overflow-hidden">
         {/* Sidebar for AllChats */}
@@ -132,8 +45,28 @@ function ChatPage() {
               </div>
             </>
           ) : (
-            <div className="flex flex-grow items-center justify-center">
+            <div className="flex flex-grow items-center justify-center flex-col space-y-4">
               <p>Select or create a chat to view messages.</p>
+              <button
+                onClick={() => navigate("/new-chat")}
+                className="p-4 rounded-full bg-blue-500 text-white flex items-center space-x-2 hover:bg-blue-600"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="w-6 h-6"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 5v14m-7-7h14"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>Create New Chat</span>
+              </button>
             </div>
           )}
         </main>

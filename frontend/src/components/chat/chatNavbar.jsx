@@ -95,7 +95,7 @@ function ChatNavbar({ chat, friend }) {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 flex bg-gray-300 rounded"
+                className="px-4 py-2 flex bg-gray-300 rounded hover:bg-gray-400"
               >
                 Close
               </button>
