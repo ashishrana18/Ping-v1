@@ -22,7 +22,7 @@ function ChatPage() {
   const friend = location.state?.friend;
 
   return (
-    <div className="h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+    <div className="h-screen flex flex-col bg-white dark:bg-[rgb(0,17,28)] text-gray-900 dark:text-dark-text">
       <Header />
       {/* Main content area */}
       <div className="flex flex-grow overflow-hidden">
@@ -45,11 +45,11 @@ function ChatPage() {
               </div>
             </>
           ) : (
-            <div className="flex flex-grow items-center justify-center flex-col space-y-4">
+            <div className="flex flex-grow items-center justify-center flex-col space-y-4 dark:text-primary">
               <p>Select or create a chat to view messages.</p>
               <button
                 onClick={() => navigate("/new-chat")}
-                className="p-4 rounded-full bg-blue-500 text-white flex items-center space-x-2 hover:bg-blue-600"
+                className="p-4 rounded-full bg-blue-500 text-white flex items-center space-x-2 hover:bg-blue-600 dark:bg-info dark:hover:bg-blue-400"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

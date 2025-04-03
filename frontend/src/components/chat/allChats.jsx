@@ -24,7 +24,6 @@ function AllChats() {
           }
           return acc;
         }, []);
-
         setChats(uniqueChats);
       })
       .catch((error) => {
@@ -35,9 +34,9 @@ function AllChats() {
 
   return (
     <div className="p-4 border-r h-full overflow-y-auto">
-      <h2 className="text-lg font-bold mb-4">Chats</h2>
+      <h2 className="text-lg font-bold mb-4 dark:text-success">Chats</h2>
       {loading ? (
-        <p>Loading chats...</p>
+        <p className="dark:text-success">Loading chats...</p>
       ) : chats.length > 0 ? (
         chats.map((object, index) => {
           // For direct messages, display friend's username; for groups, display group name.
@@ -56,7 +55,7 @@ function AllChats() {
               state={{ chat: object.chat, friend: object.friend }}
               key={`${object.chat.id}-${index}`}
               onClick={() => setActiveChatId(object.chat.id)} // Set active chat on click
-              className={`block p-2 border-b cursor-pointer transition-all duration-200 ${
+              className={`block p-2 border-b dark:bg-neutral dark:text-secondary cursor-pointer transition-all duration-200 ${
                 object.chat.id === activeChatId
                   ? "bg-gray-800 text-white" // Highlight active chat
                   : "bg-gray-100 hover:bg-gray-200" // Normal hover effect

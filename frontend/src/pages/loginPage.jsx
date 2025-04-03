@@ -35,7 +35,7 @@ function LoginPage() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="p-2 border rounded"
+          className="p-2 border rounded dark:bg-slate-800"
         />
         <input
           type="password"
@@ -44,7 +44,10 @@ function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           className="p-2 border rounded"
         />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+        <button
+          type="submit"
+          className="bg-blue-500 dark:bg-info text-white p-2 rounded"
+        >
           Login
         </button>
       </form>

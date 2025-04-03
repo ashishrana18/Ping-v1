@@ -5,7 +5,7 @@ import ChatPage from "./pages/chatPage.jsx";
 import { AuthProvider } from "./services/authContext.jsx";
 import NewChatPage from "./pages/newChatPage.jsx";
 import Heartbeat from "./components/chat/heartBeat.jsx";
-import SecretChatPage from "./components/secretChat/SecretChatPage.js";
+import SecretChatPage from "./components/secretChat/SecretChatPage.jsx";
 
 function App() {
   return (

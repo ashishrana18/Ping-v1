@@ -84,7 +84,7 @@ function SingleChat({ chat }) {
       {/* Messages container */}
       <div
         ref={containerRef}
-        className="flex-grow overflow-y-auto pl-5 pr-6 pt-5 pb-3 bg-gray-100 space-y-2 pb-24"
+        className="flex-grow overflow-y-auto pl-5 pr-6 pt-5 pb-3 bg-gray-100 dark:bg-[#212529]  space-y-2 pb-24 "
       >
         {messages.map((msg, index) => (
           <Message
@@ -97,7 +97,7 @@ function SingleChat({ chat }) {
       </div>
 
       {/* Input Box fixed at bottom */}
-      <div className="flex-shrink-0 p-2 bg-gray-200">
+      <div className="flex-shrink-0 p-2 bg-gray-200 dark:bg-panel">
         <div className="flex">
           <input
             type="text"
@@ -105,11 +105,11 @@ function SingleChat({ chat }) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-grow p-2 rounded-full mr-2 text-base"
+            className="flex-grow p-2 dark:bg-slate-600 dark:text-white rounded-full mr-2 text-base"
           />
           <button
             onClick={sendMessage}
-            className="px-4 py-2 rounded-full bg-green-500 text-white text-base"
+            className="px-4 py-2 rounded-full bg-green-600 dark:text-black text-white text-base"
           >
             Send
           </button>
