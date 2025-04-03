@@ -8,8 +8,10 @@ function Message({ message, isOwnMessage }) {
       className={`flex flex-col ${isOwnMessage ? "items-end" : "items-start"}`}
     >
       <div
-        className={`px-4 py-2 rounded-lg max-w-xs break-words ${
-          isOwnMessage ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-900"
+        className={`px-4 py-2 rounded-lg max-w-xs break-words  ${
+          isOwnMessage
+            ? "bg-blue-500 dark:bg-[#219ebc] text-white"
+            : "bg-green-700 dark:bg-accent text-white"
         }`}
       >
         <p>{message.text}</p>

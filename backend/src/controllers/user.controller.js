@@ -7,6 +7,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { client } from "../redis/redis.js";
 import { generateAccessAndRefreshToken } from "../utils/tokenGenerators.js";
+import { deleteCloudinary, uploadCloudinary } from "../utils/cloudinary.js";
 
 const prisma = new PrismaClient();
 dotenv.config();
@@ -31,7 +32,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
   try {
     const user = await prisma.user.create({
-      data: { email, username, password: hashedPassword }
+      data: {
+        email,
+        username,
+        password: hashedPassword,
+        avatar:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTItQjUALs6-IkOWnOAMl8i3zrGqQWsaL5aVQ&s"
+      }
     });
     return res.status(201).json(new ApiResponse(201, user));
   } catch (error) {
@@ -65,6 +72,7 @@ const loginUser = asyncHandler(async (req, res) => {
         id: true,
         username: true,
         email: true,
+        avatar: true,
         refreshToken: true,
         createdAt: true,
         updatedAt: true
@@ -110,7 +118,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
       username: true,
       email: true,
       createdAt: true,
-      updatedAt: true
+      updatedAt: true,
+      avatar: true
     }
   });
 
@@ -141,7 +150,7 @@ const searchUsers = asyncHandler(async (req, res) => {
         { id: { not: req.user?.userId } }
       ]
     },
-    select: { id: true, username: true, email: true }
+    select: { id: true, username: true, email: true, avatar: true }
   });
   res.status(200).json(new ApiResponse(200, users, "Users found"));
 });
@@ -204,8 +213,10 @@ const getAllChats = asyncHandler(async (req, res) => {
     for (let j = 0; j < otherChatMembers.length; j++) {
       const otherChatMember = otherChatMembers[j];
       const friend = await prisma.user.findUnique({
-        where: { id: otherChatMember.userId }
+        where: { id: otherChatMember.userId },
+        select: { id: true, username: true, avatar: true }
       });
+      console.log("friend : ", friend);
       if (friend) {
         friends.push({ chat, friend });
       }
@@ -224,6 +235,49 @@ const isOnline = asyncHandler(async (req, res) => {
   return res.status(200).json(isOnline);
 });
 
+const updateAvatar = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    throw new ApiError("Avatar is required!");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: req.user?.userId
+    }
+  });
+
+  if (!user) {
+    throw new ApiError(400, "User not found!");
+  }
+
+  const avatar = req.file?.path;
+  const oldAvatar = user.avatar;
+  const cloudinaryURL = await uploadCloudinary(avatar);
+
+  let url = null;
+
+  if (oldAvatar !== null) {
+    url = await deleteCloudinary(oldAvatar);
+  }
+
+  if (!cloudinaryURL) {
+    throw new ApiError("Cloudinary error!");
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: user.id
+    },
+    data: {
+      avatar: cloudinaryURL
+    }
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { updatedUser, url }, "done"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -231,5 +285,6 @@ export {
   searchUsers,
   getUserProfile,
   getAllChats,
-  isOnline
+  isOnline,
+  updateAvatar
 };

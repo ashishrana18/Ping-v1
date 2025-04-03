@@ -60,6 +60,7 @@ function ChatCreation({ currentUserId }) {
     // Assume the group object already has an id if it exists.
     // Simply navigate to the chat page.
     if (group && group.id) {
+      console.log(group.name);
       navigate("/chat", { state: { chat: group } });
     } else {
       console.error("Invalid group data");
@@ -87,7 +88,7 @@ function ChatCreation({ currentUserId }) {
   };
 
   return (
-    <div className="p-4 border rounded shadow">
+    <div className="p-4 border rounded shadow dark:text-white">
       <input
         type="text"
         placeholder="Search for a friend or group"
@@ -96,7 +97,7 @@ function ChatCreation({ currentUserId }) {
           setSearchQuery(e.target.value);
           setSelectedFriend(null);
         }}
-        className="mt-2 p-2 border rounded w-full"
+        className="mt-2 p-2 border rounded w-full dark:bg-slate-950"
       />
 
       {chatType === "direct" && (
@@ -107,9 +108,21 @@ function ChatCreation({ currentUserId }) {
               <div
                 key={user.id}
                 onClick={() => handleDirectChatClick(user)}
-                className="p-2 border-b cursor-pointer hover:bg-blue-100"
+                className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors"
               >
-                {user.username} ({user.email})
+                <img
+                  src={user.avatar}
+                  alt={user.username}
+                  className="w-10 h-10 rounded-full mr-4"
+                />
+                <div>
+                  <div className="font-semibold text-gray-900 dark:text-subtext">
+                    {user.username}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-subtext">
+                    {user.email}
+                  </div>
+                </div>
               </div>
             ))
           ) : (
@@ -126,7 +139,7 @@ function ChatCreation({ currentUserId }) {
               <div
                 key={group.id}
                 onClick={() => handleGroupChatClick(group)}
-                className="p-2 border-b cursor-pointer hover:bg-blue-100"
+                className="p-2 border-b cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-700 dark:text-subtext"
               >
                 {group.name}
               </div>
@@ -140,7 +153,7 @@ function ChatCreation({ currentUserId }) {
               <div
                 key={user.id}
                 onClick={() => addGroupMember(user)}
-                className="p-2 border-b cursor-pointer hover:bg-gray-200"
+                className="p-2 border-b cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-subtext"
               >
                 {user.username} ({user.email})
               </div>
@@ -169,7 +182,7 @@ function ChatCreation({ currentUserId }) {
 
       <button
         onClick={handleToggle}
-        className="mt-2 p-2 border rounded bg-gray-200"
+        className="mt-2 p-2 border rounded bg-gray-200 dark:bg-slate-950"
       >
         Switch to {chatType === "direct" ? "Group Chat" : "Direct Chat"}
       </button>

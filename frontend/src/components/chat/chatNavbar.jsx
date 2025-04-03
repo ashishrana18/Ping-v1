@@ -1,10 +1,25 @@
-/* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import api from "../../services/api.js";
+import { FiEye, FiLock, FiCamera, FiMoreVertical } from "react-icons/fi";
+import { AuthContext } from "../../services/authcontext.jsx";
+import { ChangeAvatarModal } from "./ChangeAvatarModal.jsx";
+import { ViewAvatarModal } from "./ViewAvatarModal.jsx";
 
 function ChatNavbar({ chat, friend }) {
+  const { setUser } = useContext(AuthContext);
+  // Local state for the current chat (for group chats)
+  const [currentChat, setCurrentChat] = useState(chat);
   const [onlineStatus, setOnlineStatus] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showChangeAvatarModal, setShowChangeAvatarModal] = useState(false);
+  const [showViewAvatarModal, setShowViewAvatarModal] = useState(false);
+  const [showSecretChatModal, setShowSecretChatModal] = useState(false);
+  const menuRef = useRef(null);
+
+  // Update local chat state when the prop changes
+  useEffect(() => {
+    setCurrentChat(chat);
+  }, [chat]);
 
   useEffect(() => {
     async function fetchOnlineStatus() {
@@ -22,29 +37,47 @@ function ChatNavbar({ chat, friend }) {
     }
   }, [friend]);
 
-  const isGroup = chat.isGroup;
+  // Use currentChat for groups; for one-on-one chats, use friend
+  const isGroup = currentChat?.isGroup;
   const displayName = isGroup
-    ? chat.name || "Unnamed Group"
+    ? currentChat?.name || "Unnamed Group"
     : (friend && (friend.nickname || friend.username)) || "Unnamed Chat";
   const profilePicture = isGroup
-    ? chat.avatar ||
+    ? currentChat?.avatar ||
       "https://png.pngtree.com/png-clipart/20190620/original/pngtree-vector-leader-of-group-icon-png-image_4022100.jpg"
     : (friend && friend.avatar) ||
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTItQjUALs6-IkOWnOAMl8i3zrGqQWsaL5aVQ&s";
 
-  const handleOnClick = () => {
+  const handleStartSecretChat = () => {
     if (onlineStatus) {
-      setShowModal(true);
+      setShowSecretChatModal(true);
     } else {
       alert(
         "Friend is offline. Secret chat can only be started when the friend is online."
       );
     }
+    setDropdownOpen(false);
   };
+
+  const handleOpenChangeAvatar = () => {
+    setShowChangeAvatarModal(true);
+    setDropdownOpen(false);
+  };
+
+  // Close dropdown if clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <>
-      <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b bg-white dark:bg-gray-800">
+      <div className="top-0 z-10 flex items-center justify-between p-4 border-b bg-white text-gray-900 dark:bg-[rgb(0,7,28)] dark:text-white">
         <div className="flex items-center">
           <img
             src={profilePicture}
@@ -64,27 +97,77 @@ function ChatNavbar({ chat, friend }) {
             )}
           </div>
         </div>
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
           <button
+            onClick={() => setDropdownOpen((prev) => !prev)}
             className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
-            onClick={handleOnClick}
+            title="Options"
           >
-            {/* Using a refined vertical three-dots icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              className="w-6 h-6"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 7a2 2 0 110-4 2 2 0 010 4zm0 2a2 2 0 100 4 2 2 0 000-4zm0 6a2 2 0 110 4 2 2 0 010-4z" />
-            </svg>
+            <FiMoreVertical size={24} />
           </button>
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50">
+              <button
+                onClick={() => {
+                  setShowViewAvatarModal(true);
+                  setDropdownOpen(false);
+                }}
+                className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                <FiEye className="mr-2" size={20} />
+                <span>View Avatar</span>
+              </button>
+              {isGroup ? (
+                <button
+                  onClick={handleOpenChangeAvatar}
+                  className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                >
+                  <FiCamera className="mr-2" size={20} />
+                  <span>Change Avatar</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleStartSecretChat}
+                  className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                >
+                  <FiLock className="mr-2" size={20} />
+                  <span>Start Secret Chat</span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Modal Popup */}
-      {showModal && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+      {/* View Avatar Modal */}
+      {showViewAvatarModal && (
+        <ViewAvatarModal
+          currentAvatar={profilePicture}
+          onClose={() => setShowViewAvatarModal(false)}
+          displayName={displayName}
+        />
+      )}
+
+      {/* Change Avatar Modal */}
+      {showChangeAvatarModal && (
+        <ChangeAvatarModal
+          currentAvatar={profilePicture}
+          onClose={() => setShowChangeAvatarModal(false)}
+          onUpload={(responseData) => {
+            if (isGroup && responseData.updatedChat) {
+              setCurrentChat(responseData.updatedChat);
+            } else if (!isGroup && responseData.updatedUser) {
+              setUser(responseData.updatedUser);
+            }
+            setShowChangeAvatarModal(false);
+          }}
+          chatId={isGroup ? currentChat.id : null}
+        />
+      )}
+
+      {/* Secret Chat Modal */}
+      {showSecretChatModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 dark:text-info backdrop-blur-sm">
           <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-md max-w-sm">
             <h2 className="text-xl font-bold mb-4">
               Secret Chat Under Construction
@@ -94,8 +177,8 @@ function ChatNavbar({ chat, friend }) {
             </p>
             <div className="flex justify-end">
               <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 flex bg-gray-300 rounded hover:bg-gray-400"
+                onClick={() => setShowSecretChatModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 dark:text-black"
               >
                 Close
               </button>
