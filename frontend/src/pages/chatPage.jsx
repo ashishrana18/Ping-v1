@@ -41,7 +41,7 @@ function ChatPage() {
               </div>
               {/* Single Chat Container with scroll */}
               <div className="flex-grow overflow-y-auto">
-                <SingleChat chat={activeChat} />
+                <SingleChat chat={activeChat} friend={friend} />
               </div>
             </>
           ) : (
