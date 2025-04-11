@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (!user) {
       api
-        .get("/user/profile")
+        .get(`/user/profile`)
         .then((response) => {
           if (response.data && response.data.data) {
             setUser(response.data.data);

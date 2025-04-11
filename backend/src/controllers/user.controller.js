@@ -111,8 +111,10 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const getUserProfile = asyncHandler(async (req, res) => {
+  const userId = req.params.userId || req.user?.userId;
+
   const user = await prisma.user.findUnique({
-    where: { id: req.user?.userId },
+    where: { id: userId },
     select: {
       id: true,
       username: true,

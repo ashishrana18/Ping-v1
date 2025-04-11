@@ -1,9 +1,16 @@
 // src/components/chat/SingleChat.jsx
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+  useDebugValue
+} from "react";
 import api from "../../services/api.js";
 import socket from "../../services/socket.js";
 import Message from "./Message.jsx";
 import { AuthContext } from "../../services/authcontext.jsx";
+import { ApiError } from "../../../../backend/src/utils/ApiError.js";
 
 function SingleChat({ chat, friend }) {
   const { user } = useContext(AuthContext);
@@ -13,7 +20,9 @@ function SingleChat({ chat, friend }) {
   const containerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const typingTimeout = useRef(null);
+  const [member, setMember] = useState(null);
   const [isFriendTyping, setIsFriendTyping] = useState(false);
+  const [typingChatId, setTypingChatId] = useState(null); // this is to check, in group chats, is current chat same as in which user is typing
 
   useEffect(() => {
     if (chat && chat.id && currentUserId) {
@@ -77,6 +86,10 @@ function SingleChat({ chat, friend }) {
     }
   };
 
+  useEffect(() => {
+    setInput(""); // Clear input whenever the chat changes
+  }, [chat]);
+
   const handleInputChange = (e) => {
     setInput(e.target.value);
 
@@ -91,7 +104,18 @@ function SingleChat({ chat, friend }) {
   };
 
   useEffect(() => {
-    const onTyping = ({ userId }) => {
+    const onTyping = ({ userId, chatId }) => {
+      api
+        .get(`/user/profile/${userId}`)
+        .then((response) => {
+          if (response.data && response.data.data) {
+            setMember(response.data.data);
+          }
+        })
+        .catch((error) => {
+          throw new ApiError(400, "User not fetched!", error);
+        });
+      setTypingChatId(chatId);
       if (userId !== currentUserId) setIsFriendTyping(true);
     };
     const onStop = ({ userId }) => {
@@ -129,9 +153,11 @@ function SingleChat({ chat, friend }) {
 
       {/* Input Box fixed at bottom */}
       <div className="flex-shrink-0 p-2 bg-gray-200 dark:bg-panel">
-        {isFriendTyping && (
+        {chat.id == typingChatId && isFriendTyping && (
           <div className="mx-4 mb-1 text-sm italic text-gray-600 dark:text-green-500 ">
-            {chat.isGroup ? "Someone is typing…" : `${friend.username} typing…`}
+            {chat.isGroup
+              ? member && `${member.username} is typing…`
+              : `${friend.username} typing…`}
           </div>
         )}
         <div className="flex">
