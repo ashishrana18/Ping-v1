@@ -216,7 +216,6 @@ const getAllChats = asyncHandler(async (req, res) => {
         where: { id: otherChatMember.userId },
         select: { id: true, username: true, avatar: true }
       });
-      console.log("friend : ", friend);
       if (friend) {
         friends.push({ chat, friend });
       }

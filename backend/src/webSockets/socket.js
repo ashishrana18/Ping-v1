@@ -73,6 +73,15 @@ export const setupSocket = (server) => {
       }
     });
 
+    socket.on("typing", async (data) => {
+      const { chatId, userId } = data;
+      socket.to(chatId).emit("userTyping", { chatId, userId });
+    });
+
+    socket.on("stopTyping", ({ chatId, userId }) => {
+      socket.to(chatId).emit("userStopTyping", { userId });
+    });
+
     socket.on("sendSecretMessage", async (data) => {
       const { chatId, userId, msg } = data;
       try {

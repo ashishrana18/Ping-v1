@@ -47,7 +47,7 @@ model ChatMember {
 
 model Message {
   id        String   @id @default(cuid())
-  text      String?
+  text      String
   senderId  String
   chatId    String
   createdAt DateTime @default(now())

@@ -5,13 +5,15 @@ import socket from "../../services/socket.js";
 import Message from "./Message.jsx";
 import { AuthContext } from "../../services/authcontext.jsx";
 
-function SingleChat({ chat }) {
+function SingleChat({ chat, friend }) {
   const { user } = useContext(AuthContext);
   const currentUserId = user?.id;
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const containerRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const typingTimeout = useRef(null);
+  const [isFriendTyping, setIsFriendTyping] = useState(false);
 
   useEffect(() => {
     if (chat && chat.id && currentUserId) {
@@ -75,6 +77,35 @@ function SingleChat({ chat }) {
     }
   };
 
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+
+    // notify server we’re typing
+    socket.emit("typing", { chatId: chat.id, userId: currentUserId });
+
+    clearTimeout(typingTimeout.current);
+    // after 1.5s of no keystrokes, emit stopTyping
+    typingTimeout.current = setTimeout(() => {
+      socket.emit("stopTyping", { chatId: chat.id, userId: currentUserId });
+    }, 1500);
+  };
+
+  useEffect(() => {
+    const onTyping = ({ userId }) => {
+      if (userId !== currentUserId) setIsFriendTyping(true);
+    };
+    const onStop = ({ userId }) => {
+      if (userId !== currentUserId) setIsFriendTyping(false);
+    };
+
+    socket.on("userTyping", onTyping);
+    socket.on("userStopTyping", onStop);
+    return () => {
+      socket.off("userTyping", onTyping);
+      socket.off("userStopTyping", onStop);
+    };
+  }, [currentUserId]);
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") sendMessage();
   };
@@ -98,12 +129,17 @@ function SingleChat({ chat }) {
 
       {/* Input Box fixed at bottom */}
       <div className="flex-shrink-0 p-2 bg-gray-200 dark:bg-panel">
+        {isFriendTyping && (
+          <div className="mx-4 mb-1 text-sm italic text-gray-600 dark:text-green-500 ">
+            {chat.isGroup ? "Someone is typing…" : `${friend.username} typing…`}
+          </div>
+        )}
         <div className="flex">
           <input
             type="text"
             placeholder="Type a message..."
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             className="flex-grow p-2 dark:bg-slate-600 dark:text-white rounded-full mr-2 text-base"
           />
