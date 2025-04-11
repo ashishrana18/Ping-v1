@@ -10,7 +10,7 @@ import { upload } from "../middlewares/multer.js";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
 
 const router = Router();
-router.get("/profile", verifyJWT, getUserProfile);
+router.get("/profile/:userId?", verifyJWT, getUserProfile);
 router.get("/search", verifyJWT, searchUsers);
 router.get("/allChats", verifyJWT, getAllChats);
 router.get("/online/:userId", verifyJWT, isOnline);
