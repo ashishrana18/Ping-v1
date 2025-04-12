@@ -26,11 +26,30 @@ const getMessagesByChat = asyncHandler(async (req, res) => {
       where: {
         chatId
       },
+      include: {
+        sender: {
+          select: {
+            username: true,
+            avatar: true
+          }
+        }
+      },
       orderBy: {
         createdAt: "asc"
       }
     });
-    return res.status(200).json(new ApiResponse(200, messages));
+
+    const formatted = messages.map((msg) => ({
+      id: msg.id,
+      text: msg.text,
+      chatId: msg.chatId,
+      senderId: msg.senderId,
+      senderName: msg.sender.username,
+      senderAvatar: msg.sender.avatar,
+      sentAt: msg.createdAt
+    }));
+
+    return res.status(200).json(new ApiResponse(200, formatted));
   } catch (error) {
     console.error("Error fetching messages:", error);
     throw new ApiError(500, "Error fetching messages");

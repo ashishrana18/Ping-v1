@@ -1,11 +1,5 @@
 // src/components/chat/SingleChat.jsx
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useContext,
-  useDebugValue
-} from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import api from "../../services/api.js";
 import socket from "../../services/socket.js";
 import Message from "./Message.jsx";
@@ -20,9 +14,8 @@ function SingleChat({ chat, friend }) {
   const containerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const typingTimeout = useRef(null);
-  const [member, setMember] = useState(null);
-  const [isFriendTyping, setIsFriendTyping] = useState(false);
-  const [typingChatId, setTypingChatId] = useState(null); // this is to check, in group chats, is current chat same as in which user is typing
+  const [member, setMember] = useState(null); //to display which member is typing in grp
+  const [isFriendTyping, setIsFriendTyping] = useState(false); //to display friend is typing or not
 
   useEffect(() => {
     if (chat && chat.id && currentUserId) {
@@ -105,6 +98,9 @@ function SingleChat({ chat, friend }) {
 
   useEffect(() => {
     const onTyping = ({ userId, chatId }) => {
+      // if typing isnt in current chat, or its me who is typing, then do nothing.
+      if (userId === currentUserId || chatId !== chat.id) return;
+
       api
         .get(`/user/profile/${userId}`)
         .then((response) => {
@@ -115,8 +111,7 @@ function SingleChat({ chat, friend }) {
         .catch((error) => {
           throw new ApiError(400, "User not fetched!", error);
         });
-      setTypingChatId(chatId);
-      if (userId !== currentUserId) setIsFriendTyping(true);
+      setIsFriendTyping(true);
     };
     const onStop = ({ userId }) => {
       if (userId !== currentUserId) setIsFriendTyping(false);
@@ -128,7 +123,7 @@ function SingleChat({ chat, friend }) {
       socket.off("userTyping", onTyping);
       socket.off("userStopTyping", onStop);
     };
-  }, [currentUserId]);
+  }, [currentUserId, chat]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") sendMessage();
@@ -145,6 +140,7 @@ function SingleChat({ chat, friend }) {
           <Message
             key={`${msg.id}-${index}`}
             message={msg}
+            isGroup={chat.isGroup}
             isOwnMessage={msg.senderId === currentUserId}
           />
         ))}
@@ -153,7 +149,7 @@ function SingleChat({ chat, friend }) {
 
       {/* Input Box fixed at bottom */}
       <div className="flex-shrink-0 p-2 bg-gray-200 dark:bg-panel">
-        {chat.id == typingChatId && isFriendTyping && (
+        {isFriendTyping && (
           <div className="mx-4 mb-1 text-sm italic text-gray-600 dark:text-green-500 ">
             {chat.isGroup
               ? member && `${member.username} is typing…`

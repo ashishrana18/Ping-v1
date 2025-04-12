@@ -3,7 +3,10 @@ import { Server } from "socket.io";
 import { client } from "../redis/redis.js";
 import { createMessage } from "../controllers/message.controller.js";
 import { create } from "../controllers/secretChat.controller.js";
+import { PrismaClient } from "@prisma/client";
 import { ApiError } from "../utils/ApiError.js";
+
+const prisma = new PrismaClient();
 
 export const setupSocket = (server) => {
   const io = new Server(server, {
@@ -39,10 +42,18 @@ export const setupSocket = (server) => {
             chatId // Ensure chatId corresponds to an existing chat
           });
           console.log("Message saved:", savedMessage);
+
+          const sender = await prisma.user.findUnique({
+            where: { id: senderId },
+            select: { username: true, avatar: true }
+          });
+
           io.to(chatId).emit("receiveMessage", {
             id: savedMessage.id,
             text: savedMessage.text,
             senderId: savedMessage.senderId,
+            senderName: sender.username,
+            senderAvatar: sender.avatar,
             sentAt: savedMessage.createdAt
           });
 
