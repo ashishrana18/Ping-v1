@@ -7,7 +7,8 @@ dotenv.config({ path: "./.env" });
 
 const server = createServer(app);
 
-setupSocket(server);
+const io = setupSocket(server);
+app.set("io", io);
 
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
