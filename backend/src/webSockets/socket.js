@@ -4,7 +4,6 @@ import { client } from "../redis/redis.js";
 import { createMessage } from "../controllers/message.controller.js";
 import { create } from "../controllers/secretChat.controller.js";
 import { PrismaClient } from "@prisma/client";
-import { ApiError } from "../utils/ApiError.js";
 
 const prisma = new PrismaClient();
 
@@ -54,7 +53,8 @@ export const setupSocket = (server) => {
             senderId: savedMessage.senderId,
             senderName: sender.username,
             senderAvatar: sender.avatar,
-            sentAt: savedMessage.createdAt
+            sentAt: savedMessage.createdAt,
+            chatId: savedMessage.chatId
           });
 
           console.log("Message sent to chat:", chatId);
@@ -113,4 +113,5 @@ export const setupSocket = (server) => {
       console.log(`User disconnected: ${socket.id}`);
     });
   });
+  return io;
 };
