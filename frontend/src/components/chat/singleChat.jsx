@@ -53,13 +53,14 @@ function SingleChat({ chat, friend }) {
 
   useEffect(() => {
     const messageHandler = (message) => {
+      if (message.chatId !== chat.id) return;
       setMessages((prev) => [...prev, message]);
     };
     socket.on("receiveMessage", messageHandler);
     return () => {
       socket.off("receiveMessage", messageHandler);
     };
-  }, []);
+  }, [chat.id]);
 
   // Auto-scroll logic on new messages
   useEffect(() => {
