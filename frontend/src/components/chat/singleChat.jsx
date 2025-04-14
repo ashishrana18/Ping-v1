@@ -208,14 +208,19 @@ function SingleChat({ chat, friend }) {
                 {messages
                   .find((m) => m.id === reactionsPopup)
                   ?.reactions.map((r, i) => (
-                    <div key={i} className="flex items-center space-x-3 ">
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 p-2 hover:bg-gray-800 rounded-md"
+                    >
                       <img
                         src={r.user.avatar}
                         alt={r.user.username}
-                        className="w-8 h-8 rounded-full"
+                        className="w-8 h-8 rounded-full object-cover"
                       />
-                      <span className="font-medium">{r.user.username}</span>
-                      <span className="ml-auto text-2xl">{r.emoji}</span>
+                      <span className="font-medium text-white">
+                        {r.user.username}
+                      </span>
+                      <span className="text-2xl ml-auto">{r.emoji}</span>
                     </div>
                   ))}
               </div>
