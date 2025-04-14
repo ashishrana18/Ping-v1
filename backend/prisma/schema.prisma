@@ -8,50 +8,60 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
-  email        String   @unique
+  id           String       @id @default(cuid())
+  email        String       @unique
   password     String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  avatar       String?
+  username     String       @unique
   refreshToken String?
-  avatar       String? // Profile picture URL
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  messages Message[]
-  chats    ChatMember[]
+  chats        ChatMember[]
+  messages     Message[]
+  reactions    Reaction[]
 }
 
 model Chat {
-  id        String   @id @default(cuid())
-  isGroup   Boolean  @default(false) // False for 1-on-1, True for group chat
-  name      String? // Group name (null for 1-on-1)
-  createdAt DateTime @default(now())
-  avatar    String? // Group picture URL
-
-  messages Message[]
-  members  ChatMember[]
+  id        String       @id @default(cuid())
+  isGroup   Boolean      @default(false)
+  name      String?
+  createdAt DateTime     @default(now())
+  avatar    String?
+  members   ChatMember[]
+  messages  Message[]
 }
 
 model ChatMember {
   id       String   @id @default(cuid())
   userId   String
   chatId   String
-  nickname String?
   joinedAt DateTime @default(now())
+  nickname String?
+  chat     Chat     @relation(fields: [chatId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
 
-  user User @relation(fields: [userId], references: [id])
-  chat Chat @relation(fields: [chatId], references: [id])
-
-  @@unique([userId, chatId]) // Ensures a user is in a chat only once
+  @@unique([userId, chatId])
 }
 
 model Message {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   text      String
   senderId  String
   chatId    String
-  createdAt DateTime @default(now())
+  createdAt DateTime   @default(now())
+  chat      Chat       @relation(fields: [chatId], references: [id])
+  sender    User       @relation(fields: [senderId], references: [id])
+  reactions Reaction[]
+}
 
-  sender User @relation(fields: [senderId], references: [id])
-  chat   Chat @relation(fields: [chatId], references: [id])
+model Reaction {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  messageId String
+  userId    String
+  emoji     String    @db.VarChar(255)
+  createdAt DateTime? @default(now()) @db.Timestamp(6)
+  message   Message   @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user      User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([messageId, userId], map: "unique_message_user")
 }

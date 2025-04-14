@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 import { client } from "../redis/redis.js";
 import { createMessage } from "../controllers/message.controller.js";
 import { create } from "../controllers/secretChat.controller.js";
+import { createReaction } from "../controllers/reaction.controller.js";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -91,6 +92,29 @@ export const setupSocket = (server) => {
 
     socket.on("stopTyping", ({ chatId, userId }) => {
       socket.to(chatId).emit("userStopTyping", { userId });
+    });
+
+    socket.on("new-reaction", async ({ messageId, emoji, senderId }) => {
+      const userId = senderId;
+
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { username: true }
+      });
+
+      await prisma.reaction.createReaction({
+        data: {
+          emoji,
+          messageId,
+          userId
+        }
+      });
+
+      io.emit("reaction-added", {
+        messageId,
+        emoji,
+        user
+      });
     });
 
     socket.on("sendSecretMessage", async (data) => {

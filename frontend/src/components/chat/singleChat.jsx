@@ -16,6 +16,7 @@ function SingleChat({ chat, friend }) {
   const typingTimeout = useRef(null);
   const [member, setMember] = useState(null); //to display which member is typing in grp
   const [isFriendTyping, setIsFriendTyping] = useState(false); //to display friend is typing or not
+  const [reactionsPopup, setReactionsPopup] = useState(null);
 
   useEffect(() => {
     if (chat && chat.id && currentUserId) {
@@ -126,6 +127,57 @@ function SingleChat({ chat, friend }) {
     };
   }, [currentUserId, chat]);
 
+  useEffect(() => {
+    socket.on("reaction-added", ({ messageId, emoji, user }) => {
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) => {
+          if (msg.id !== messageId) return msg;
+
+          return {
+            ...msg,
+            reactions: [...(msg.reactions || []), { emoji, user }]
+          };
+        })
+      );
+    });
+
+    return () => socket.off("reaction-added");
+  }, []);
+
+  useEffect(() => {
+    socket.on("reaction-updated", ({ messageId, emoji, user, action }) => {
+      setMessages((prev) =>
+        prev.map((msg) => {
+          if (msg.id !== messageId) return msg;
+          let reactions = msg.reactions || [];
+          if (action === "removed") {
+            reactions = reactions.filter((r) => !(r.user.id === user.id));
+          } else {
+            // replace existing or add
+            reactions = [
+              ...reactions.filter((r) => r.user.id !== user.id),
+              { emoji, user }
+            ];
+          }
+          return { ...msg, reactions };
+        })
+      );
+    });
+    return () => {
+      socket.off("reaction-updated");
+    };
+  }, []);
+
+  const handleReaction = async (messageId, emoji) => {
+    try {
+      await api.post(`/messages/${messageId}/${currentUserId}`, {
+        reactionType: emoji
+      });
+    } catch (err) {
+      console.error("Failed to react:", err);
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") sendMessage();
   };
@@ -143,9 +195,39 @@ function SingleChat({ chat, friend }) {
             message={msg}
             isGroup={chat.isGroup}
             isOwnMessage={msg.senderId === currentUserId}
+            onReact={handleReaction}
+            onShowReactions={(messageId) => setReactionsPopup(messageId)}
           />
         ))}
         <div ref={messagesEndRef} />
+        {reactionsPopup && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 dark:text-white p-6 rounded-lg max-w-sm w-full">
+              <h3 className="text-lg font-semibold mb-4">Reactions</h3>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {messages
+                  .find((m) => m.id === reactionsPopup)
+                  ?.reactions.map((r, i) => (
+                    <div key={i} className="flex items-center space-x-3 ">
+                      <img
+                        src={r.user.avatar}
+                        alt={r.user.username}
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <span className="font-medium">{r.user.username}</span>
+                      <span className="ml-auto text-2xl">{r.emoji}</span>
+                    </div>
+                  ))}
+              </div>
+              <button
+                className="mt-4 px-4 py-2 bg-gray-200 rounded dark:text-black"
+                onClick={() => setReactionsPopup(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Input Box fixed at bottom */}

@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { create } from "./secretChat.controller.js";
 const prisma = new PrismaClient();
 
 const createMessage = async ({ text, senderId, chatId }) => {
@@ -30,6 +31,11 @@ const getMessagesByChat = asyncHandler(async (req, res) => {
             username: true,
             avatar: true
           }
+        },
+        reactions: {
+          include: {
+            user: { select: { id: true, username: true, avatar: true } }
+          }
         }
       },
       orderBy: {
@@ -45,7 +51,8 @@ const getMessagesByChat = asyncHandler(async (req, res) => {
       senderName: msg.sender.username,
       senderAvatar: msg.sender.avatar,
       reads: messages.reads,
-      sentAt: msg.createdAt
+      sentAt: msg.createdAt,
+      reactions: msg.reactions || []
     }));
 
     return res.status(200).json(new ApiResponse(200, formatted));
