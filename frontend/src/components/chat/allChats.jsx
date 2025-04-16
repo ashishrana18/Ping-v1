@@ -55,7 +55,7 @@ function AllChats() {
               state={{ chat: object.chat, friend: object.friend }}
               key={`${object.chat.id}-${index}`}
               onClick={() => setActiveChatId(object.chat.id)} // Set active chat on click
-              className={`block p-2 border-b dark:bg-neutral dark:text-secondary cursor-pointer transition-all duration-200 ${
+              className={`block z-10 p-2 border-b dark:bg-neutral dark:text-secondary cursor-pointer transition-all duration-200 ${
                 object.chat.id === activeChatId
                   ? "bg-gray-800 text-white" // Highlight active chat
                   : "bg-gray-100 hover:bg-gray-200" // Normal hover effect

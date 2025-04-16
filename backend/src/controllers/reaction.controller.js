@@ -14,7 +14,6 @@ const createReaction = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Missing required fields");
   }
 
-  // 1️⃣ See if there’s already a reaction
   const existing = await prisma.reaction.findUnique({
     where: { messageId_userId: { messageId, userId } }
   });
@@ -24,7 +23,6 @@ const createReaction = asyncHandler(async (req, res) => {
   let chatId;
 
   if (!existing) {
-    // 2️⃣ No existing → create
     reaction = await prisma.reaction.create({
       data: {
         messageId,
@@ -38,8 +36,6 @@ const createReaction = asyncHandler(async (req, res) => {
     action = "added";
     chatId = reaction.message.chatId;
   } else if (existing.emoji === reactionType) {
-    // 3️⃣ Same emoji clicked again → delete
-    // we need chatId before we delete
     const msg = await prisma.message.findUnique({
       where: { id: messageId },
       select: { chatId: true }
@@ -52,7 +48,6 @@ const createReaction = asyncHandler(async (req, res) => {
     });
     action = "removed";
   } else {
-    // 4️⃣ Different emoji → update
     reaction = await prisma.reaction.update({
       where: { messageId_userId: { messageId, userId } },
       data: { emoji: reactionType },
@@ -64,13 +59,11 @@ const createReaction = asyncHandler(async (req, res) => {
     chatId = reaction.message.chatId;
   }
 
-  // 5️⃣ Fetch user info for broadcast
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, username: true, avatar: true }
   });
 
-  // 6️⃣ Build payload & emit
   const payload = {
     messageId,
     emoji: action === "removed" ? null : reaction.emoji,
@@ -79,7 +72,6 @@ const createReaction = asyncHandler(async (req, res) => {
   };
   io.to(chatId).emit("reaction-updated", payload);
 
-  // 7️⃣ Respond
   res
     .status(200)
     .json(
