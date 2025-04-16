@@ -128,23 +128,6 @@ function SingleChat({ chat, friend }) {
   }, [currentUserId, chat]);
 
   useEffect(() => {
-    socket.on("reaction-added", ({ messageId, emoji, user }) => {
-      setMessages((prevMessages) =>
-        prevMessages.map((msg) => {
-          if (msg.id !== messageId) return msg;
-
-          return {
-            ...msg,
-            reactions: [...(msg.reactions || []), { emoji, user }]
-          };
-        })
-      );
-    });
-
-    return () => socket.off("reaction-added");
-  }, []);
-
-  useEffect(() => {
     socket.on("reaction-updated", ({ messageId, emoji, user, action }) => {
       setMessages((prev) =>
         prev.map((msg) => {

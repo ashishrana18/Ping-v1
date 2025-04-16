@@ -6,7 +6,7 @@ import { FiPlus, FiCamera, FiLogOut } from "react-icons/fi";
 import { ChangeAvatarModal } from "./ChangeAvatarModal.jsx";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 
-function Header() {
+function Header({ onMenuClick }) {
   const { user, setUser, loading } = useContext(AuthContext);
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -75,7 +75,29 @@ function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-10 p-4 border-b bg-white dark:bg-gray-800 dark:text-primary flex justify-between items-center">
+      <header className="sticky top-0 z-100 p-4 border-b bg-white dark:bg-gray-800 dark:text-primary flex justify-between items-center">
+        {onMenuClick && (
+          <button
+            className="md:hidden p-2 mr-2"
+            onClick={onMenuClick}
+            aria-label="Toggle sidebar"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-gray-700 dark:text-gray-200"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        )}
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate("/chat", { state: {} })}

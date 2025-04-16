@@ -94,33 +94,10 @@ export const setupSocket = (server) => {
       socket.to(chatId).emit("userStopTyping", { userId });
     });
 
-    socket.on("new-reaction", async ({ messageId, emoji, senderId }) => {
-      const userId = senderId;
-
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { username: true }
-      });
-
-      await prisma.reaction.createReaction({
-        data: {
-          emoji,
-          messageId,
-          userId
-        }
-      });
-
-      io.emit("reaction-added", {
-        messageId,
-        emoji,
-        user
-      });
-    });
-
     socket.on("sendSecretMessage", async (data) => {
       const { chatId, userId, msg } = data;
       try {
-        await create({ userId, chatId, msg });
+        await prisma.message.create({ userId, chatId, msg });
         io.to(chatId).emit("receiveSecretMessage", {
           userId,
           msg,

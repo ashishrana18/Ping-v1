@@ -1,5 +1,5 @@
 import React from "react";
-import EmojiPicker from "emoji-picker-react";
+import Picker from "emoji-picker-react";
 import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 
@@ -45,6 +45,16 @@ export default function Message({
 
     setPickerStyles({ top: y, left: x });
   }, [showPicker, pickerPosition]);
+
+  useEffect(() => {
+    const onClick = (ev) => {
+      if (pickerRef.current && !pickerRef.current.contains(ev.target)) {
+        setShowPicker(false);
+      }
+    };
+    if (showPicker) document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [showPicker]);
 
   const handleContextMenu = (e) => {
     e.preventDefault();
@@ -93,26 +103,6 @@ export default function Message({
           <div className="text-base">{message.text}</div>
           <span className="text-[11px] text-gray-300 ml-2 mt-0.5">{time}</span>
         </div>
-        {showPicker && (
-          <div
-            ref={pickerRef}
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              top: pickerStyles.top,
-              left: pickerStyles.left
-            }}
-            className=" bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2"
-          >
-            {/* close button */}
-            <button
-              onClick={() => setShowPicker(false)}
-              className="absolute top-1 right-1 h-7 w-7 z-20 flex items-center justify-center bg-red-500 text-white hover:text-gray-200 text-2xl rounded"
-            >
-              &times;
-            </button>
-            <EmojiPicker onEmojiClick={handleEmojiClick} className="z-10" />
-          </div>
-        )}
         {Object.keys(counts).length > 0 && (
           <div
             className="flex items-center space-x-1 ml-2 mt-2 cursor-pointer"
@@ -130,6 +120,23 @@ export default function Message({
           </div>
         )}
       </div>
+      {showPicker && (
+        <div
+          ref={pickerRef}
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            top: pickerStyles.top,
+            left: pickerStyles.left
+          }}
+          className=" bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2"
+        >
+          <Picker
+            reactionsDefaultOpen={true}
+            onEmojiClick={handleEmojiClick}
+            className="z-10"
+          />
+        </div>
+      )}
     </div>
   );
 }
