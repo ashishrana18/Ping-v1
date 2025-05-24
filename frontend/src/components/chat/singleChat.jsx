@@ -136,13 +136,13 @@ function SingleChat({ chat, friend }) {
           if (action === "removed") {
             reactions = reactions.filter((r) => !(r.user.id === user.id));
           } else {
-            // replace existing or add
+            // filter out prev reaction, and add the new reaction {emoji,user} to it
             reactions = [
               ...reactions.filter((r) => r.user.id !== user.id),
               { emoji, user }
             ];
           }
-          return { ...msg, reactions };
+          return { ...msg, reactions }; // this will update/overwrite the message with updated reactions
         })
       );
     });
@@ -188,6 +188,7 @@ function SingleChat({ chat, friend }) {
             <div className="bg-white dark:bg-gray-800 dark:text-white p-6 rounded-lg max-w-sm w-full">
               <h3 className="text-lg font-semibold mb-4">Reactions</h3>
               <div className="space-y-2 max-h-60 overflow-y-auto">
+                {/*  msg.reactions look like {emoji,user} */}
                 {messages
                   .find((m) => m.id === reactionsPopup)
                   ?.reactions.map((r, i) => (
