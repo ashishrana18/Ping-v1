@@ -32,8 +32,15 @@ const getMessagesByChat = asyncHandler(async (req, res) => {
           }
         },
         reactions: {
-          include: {
-            user: { select: { id: true, username: true, avatar: true } }
+          select: {
+            emoji: true,
+            user: {
+              select: {
+                id: true,
+                username: true,
+                avatar: true
+              }
+            }
           }
         }
       },
@@ -49,7 +56,6 @@ const getMessagesByChat = asyncHandler(async (req, res) => {
       senderId: msg.senderId,
       senderName: msg.sender.username,
       senderAvatar: msg.sender.avatar,
-      reads: messages.reads,
       sentAt: msg.createdAt,
       reactions: msg.reactions || []
     }));

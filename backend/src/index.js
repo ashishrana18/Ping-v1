@@ -1,7 +1,7 @@
 import { createServer } from "http";
 import app from "./app.js";
 import dotenv from "dotenv";
-import { setupSocket } from "./WebSockets/socket.js";
+import { setupSocket } from "./webSockets/socket.js";
 
 dotenv.config({ path: "./.env" });
 
