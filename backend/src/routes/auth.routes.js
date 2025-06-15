@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
+import { slidingWindowRateLimiter } from "../middlewares/rateLimiter.js";
 import {
   loginUser,
   logoutUser,
@@ -7,12 +8,16 @@ import {
 } from "../controllers/user.controller.js";
 
 const router = Router();
+const rateLimiter = slidingWindowRateLimiter({
+  windowSizeInSeconds: 60, // 1 minute
+  maxRequests: 100 // max 10 req/min per user/IP
+});
 
 // Register Route
 router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/login", rateLimiter, loginUser);
 
 //verified routes
-router.get("/logout", verifyJWT, logoutUser);
+router.get("/logout", verifyJWT, rateLimiter, logoutUser);
 
 export { router as authRouter };
