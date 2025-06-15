@@ -50,7 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // Login Route
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password);
+  console.log(email, password, req.ip);
   if (!email || !password) {
     return res.status(400).json({ error: "All fields are required" });
   }

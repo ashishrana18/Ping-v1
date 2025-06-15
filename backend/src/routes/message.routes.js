@@ -3,11 +3,16 @@ import { Router } from "express";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
 import { getMessagesByChat } from "../controllers/message.controller.js";
 import { createReaction } from "../controllers/reaction.controller.js";
+import { slidingWindowRateLimiter } from "../middlewares/rateLimiter.js";
 
 const router = Router();
+const rateLimiter = slidingWindowRateLimiter({
+  windowSizeInSeconds: 60, // 1 minute
+  maxRequests: 100 // max 30 req/min per user/IP
+});
 
 // GET messages for a specific chat/room
-router.get("/:chatId", verifyJWT, getMessagesByChat);
-router.post("/:messageId/:userId", verifyJWT, createReaction);
+router.get("/:chatId", verifyJWT, rateLimiter, getMessagesByChat);
+router.post("/:messageId/:userId", verifyJWT, rateLimiter, createReaction);
 
 export { router as messageRouter };
