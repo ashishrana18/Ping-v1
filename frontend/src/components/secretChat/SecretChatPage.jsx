@@ -1,7 +1,7 @@
 // src/pages/SecretChatPage.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import SecretChatHeader from "./secretChatHeader.jsx";
+import SecretChatHeader from "./SecretChatHeader.jsx";
 import SecretChatMessages from "./SecretChatMessages.jsx";
 import SecretChatInput from "./SecretChatInput.jsx";
 import api from "../../services/api.js";
