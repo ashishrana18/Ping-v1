@@ -6,7 +6,7 @@ import SecretChatMessages from "./SecretChatMessages.jsx";
 import SecretChatInput from "./SecretChatInput.jsx";
 import api from "../../services/api.js";
 import socket from "../../services/socket.js";
-import { AuthContext } from "../../services/authcontext.jsx";
+import { AuthContext } from "../../services/authContext.jsx";
 
 function SecretChatPage({ secretChatId, recipient, ...props }) {
   const navigate = useNavigate();
