@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import api from "../../services/api.js";
 import socket from "../../services/socket.js";
-import Message from "./Message.jsx";
+import Message from "./message.jsx";
 import { AuthContext } from "../../services/authContext.jsx";
 import { ApiError } from "../../../../backend/src/utils/ApiError.js";
 
