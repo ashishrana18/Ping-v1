@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 export const setupSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173", // Explicit frontend URL
+      origin: "https://ping-v1.vercel.app", // Explicit frontend URL
       methods: ["GET", "POST"],
       credentials: true
     }
