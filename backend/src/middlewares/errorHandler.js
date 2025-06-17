@@ -4,6 +4,9 @@ function errorHandler(err, req, res, next) {
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json(err.toJSON());
   }
+
+  console.error("Unhandled Error:", err);
+
   // For other errors, send a generic error response.
   res.status(500).json({
     statusCode: 500,
