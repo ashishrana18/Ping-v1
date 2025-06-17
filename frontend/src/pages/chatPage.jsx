@@ -3,9 +3,9 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../services/authContext.jsx";
 import Header from "../components/chat/header.jsx";
-import AllChats from "../components/chat/AllChats.jsx";
-import SingleChat from "../components/chat/SingleChat.jsx";
-import ChatNavbar from "../components/chat/ChatNavbar.jsx";
+import AllChats from "../components/chat/allChats.jsx";
+import SingleChat from "../components/chat/singleChat.jsx";
+import ChatNavbar from "../components/chat/chatNavbar.jsx";
 
 function ChatPage() {
   const navigate = useNavigate();
