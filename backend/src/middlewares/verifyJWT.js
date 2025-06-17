@@ -48,9 +48,8 @@ export const verifyJWT = async (req, res, next) => {
 
         const options = {
           httpOnly: true,
-          secure: false, // Set to true if using HTTPS
-          sameSite: "none", // allow cross‑site XHR from your Vercel front‑end
-          path: "/"
+          secure: true, // Set to true if using HTTPS
+          sameSite: "None"
         };
         res.cookie("accessToken", accessToken, options);
         res.cookie("refreshToken", newRefreshToken, options);
