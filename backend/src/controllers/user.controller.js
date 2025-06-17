@@ -81,7 +81,9 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
       httpOnly: true,
-      secure: false // Set to true if using HTTPS
+      secure: false, // Set to true if using HTTPS
+      sameSite: "none", // allow cross‑site XHR from your Vercel front‑end
+      path: "/"
     };
 
     return res
