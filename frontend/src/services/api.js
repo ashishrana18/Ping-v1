@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "https://ping-v1.onrender.com/api",
   withCredentials: true // Important for sending HTTP-only cookies
 });
 
