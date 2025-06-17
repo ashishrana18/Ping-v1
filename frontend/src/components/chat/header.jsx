@@ -1,9 +1,9 @@
 import React, { useEffect, useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
-import { AuthContext } from "../../services/authcontext.jsx";
+import { AuthContext } from "../../services/authContext.jsx";
 import { FiPlus, FiCamera, FiLogOut } from "react-icons/fi";
-import { ChangeAvatarModal } from "./ChangeAvatarModal.jsx";
+import { ChangeAvatarModal } from "./changeAvatarModal.jsx";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 
 function Header({ onMenuClick }) {

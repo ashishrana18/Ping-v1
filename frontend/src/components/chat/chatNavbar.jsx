@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import api from "../../services/api.js";
 import { FiEye, FiLock, FiCamera, FiMoreVertical } from "react-icons/fi";
-import { AuthContext } from "../../services/authcontext.jsx";
-import { ChangeAvatarModal } from "./ChangeAvatarModal.jsx";
-import { ViewAvatarModal } from "./ViewAvatarModal.jsx";
+import { AuthContext } from "../../services/authContext.jsx";
+import { ChangeAvatarModal } from "./changeAvatarModal.jsx";
+import { ViewAvatarModal } from "./viewAvatarModal.jsx";
 
 function ChatNavbar({ chat, friend }) {
   const { setUser } = useContext(AuthContext);

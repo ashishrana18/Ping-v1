@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import api from "../../services/api.js";
 import socket from "../../services/socket.js";
 import Message from "./Message.jsx";
-import { AuthContext } from "../../services/authcontext.jsx";
+import { AuthContext } from "../../services/authContext.jsx";
 import { ApiError } from "../../../../backend/src/utils/ApiError.js";
 
 function SingleChat({ chat, friend }) {
