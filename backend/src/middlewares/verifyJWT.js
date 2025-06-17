@@ -48,7 +48,7 @@ export const verifyJWT = async (req, res, next) => {
 
         const options = {
           httpOnly: true,
-          secure: true
+          secure: false // Set to true if using HTTPS
         };
         res.cookie("accessToken", accessToken, options);
         res.cookie("refreshToken", newRefreshToken, options);
