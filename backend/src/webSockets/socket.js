@@ -2,8 +2,6 @@
 import { Server } from "socket.io";
 import { client } from "../redis/redis.js";
 import { createMessage } from "../controllers/message.controller.js";
-import { create } from "../controllers/secretChat.controller.js";
-import { createReaction } from "../controllers/reaction.controller.js";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -11,7 +9,7 @@ const prisma = new PrismaClient();
 export const setupSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "https://ping-v1.vercel.app", // Explicit frontend URL
+      origin: process.env.CORS_ORIGIN, // Explicit frontend URL
       methods: ["GET", "POST"],
       credentials: true
     }
