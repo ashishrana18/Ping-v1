@@ -22,6 +22,10 @@ import { messageRouter } from "./routes/message.routes.js";
 import { chatRouter } from "./routes/chat.routes.js";
 import { secretRouter } from "./routes/secret.routes.js";
 
+app.get("/ping", (req, res) => {
+  res.status(200).send("pong");
+});
+
 app.use("/api/user/", userRouter);
 app.use("/api/auth/", authRouter);
 app.use("/api/messages/", messageRouter);
