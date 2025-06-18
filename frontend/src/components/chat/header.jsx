@@ -14,6 +14,12 @@ function Header({ onMenuClick }) {
   const menuRef = useRef(null);
   const [darkMode, setDarkMode] = useState(false);
 
+  // Check local storage for theme preference on initial load and apply dark mode if set
+  // This runs only once when the component mounts
+  // and sets the initial dark mode state based on localStorage
+  // This is useful for maintaining the user's theme preference across sessions
+  // This ensures that the dark mode is applied immediately when the app loads
+  // and the user doesn't see a flash of light mode before the theme is applied
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme === "dark") {
