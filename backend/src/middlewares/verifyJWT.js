@@ -46,13 +46,22 @@ export const verifyJWT = async (req, res, next) => {
         const { accessToken, refreshToken: newRefreshToken } =
           await generateAccessAndRefreshToken(decodedRefresh.userId);
 
-        const options = {
+        const accessTokenOptions = {
           httpOnly: true,
-          secure: true, // Set to true if using HTTPS
-          sameSite: "None"
+          secure: true,
+          sameSite: "None",
+          maxAge: 24 * 60 * 60 * 1000 // 1 day
         };
-        res.cookie("accessToken", accessToken, options);
-        res.cookie("refreshToken", newRefreshToken, options);
+
+        const refreshTokenOptions = {
+          httpOnly: true,
+          secure: true,
+          sameSite: "None",
+          maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        };
+
+        res.cookie("accessToken", accessToken, accessTokenOptions);
+        res.cookie("refreshToken", newRefreshToken, refreshTokenOptions);
 
         // Optionally, attach the decoded access token payload to req.user
         req.user = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
