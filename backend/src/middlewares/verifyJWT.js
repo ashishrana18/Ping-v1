@@ -48,7 +48,7 @@ export const verifyJWT = async (req, res, next) => {
 
         const accessTokenOptions = {
           httpOnly: true,
-          secure: true,
+          secure: process.env.NODE_ENV === "production",
           sameSite: "None",
           maxAge: 24 * 60 * 60 * 1000 // 1 day
         };

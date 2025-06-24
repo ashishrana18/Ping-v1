@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import dotenv from "dotenv";
 
 import { PrismaClient } from "@prisma/client";
 import { ApiError } from "../utils/ApiError.js";
@@ -10,7 +9,6 @@ import { generateAccessAndRefreshToken } from "../utils/tokenGenerators.js";
 import { deleteCloudinary, uploadCloudinary } from "../utils/cloudinary.js";
 
 const prisma = new PrismaClient();
-dotenv.config();
 
 // Register Route
 const registerUser = asyncHandler(async (req, res) => {
@@ -81,14 +79,14 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const accessTokenOptions = {
       httpOnly: true,
-      secure: true, // set to true if using https
+      secure: process.env.NODE_ENV === "production", // set to true if using https
       sameSite: "None",
       maxAge: 24 * 60 * 60 * 1000 // 1 day
     };
 
     const refreshTokenOptions = {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
@@ -112,10 +110,16 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   await client.del(`online:${userId}`);
 
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", //this is true in production(HTTPS)
+    sameSite: "none"
+  };
+
   return res
     .status(200)
-    .clearCookie("accessToken")
-    .clearCookie("refreshToken")
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, "Logged out successfully"));
 });
 
