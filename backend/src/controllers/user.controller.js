@@ -79,16 +79,24 @@ const loginUser = asyncHandler(async (req, res) => {
       }
     });
 
-    const options = {
+    const accessTokenOptions = {
       httpOnly: true,
-      secure: true, // Set to true if using HTTPS
-      sameSite: "None"
+      secure: true, // set to true if using https
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    };
+
+    const refreshTokenOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
 
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
+      .cookie("accessToken", accessToken, accessTokenOptions)
+      .cookie("refreshToken", refreshToken, refreshTokenOptions)
       .json(new ApiResponse(200, { loggedInUser, accessToken, refreshToken }));
   } catch (error) {
     res.status(500).json({ error: "Something went wrong" });
