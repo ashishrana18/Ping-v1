@@ -3,76 +3,66 @@ import { ApiError } from "../utils/ApiError.js";
 import { generateAccessAndRefreshToken } from "../utils/tokenGenerators.js";
 
 export const verifyJWT = async (req, res, next) => {
-  let token;
+  // 1) Grab tokens
+  const header = req.headers.authorization;
+  let accessToken = header?.startsWith("Bearer ")
+    ? header.split(" ")[1]
+    : req.cookies?.accessToken;
+  const refreshToken = req.cookies?.refreshToken;
 
-  // Try to get the access token from the Authorization header
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer ")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  } else if (req.cookies && req.cookies.accessToken) {
-    token = req.cookies.accessToken;
-  }
-
-  if (!token) {
-    return next(new ApiError(401, "Access token not provided"));
-  }
-
-  try {
-    // Try verifying the access token
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    req.user = decoded;
-    return next();
-  } catch (error) {
-    // If the error is due to expiration, try verifying the refresh token
-    if (error.name === "TokenExpiredError") {
-      console.log("Access token expired. Checking refresh token...");
-
-      let refreshToken;
-      if (req.cookies && req.cookies.refreshToken) {
-        refreshToken = req.cookies.refreshToken;
-      } else {
-        return next(new ApiError(401, "Refresh token not provided"));
+  // 2) Try verify access token first
+  if (accessToken) {
+    try {
+      req.user = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+      return next();
+    } catch (err) {
+      if (err.name !== "TokenExpiredError") {
+        return next(new ApiError(403, "Invalid access token"));
       }
-
-      try {
-        // Verify the refresh token
-        const decodedRefresh = jwt.verify(
-          refreshToken,
-          process.env.REFRESH_TOKEN_SECRET
-        );
-        // If refresh token is valid, generate new tokens
-        const { accessToken, refreshToken: newRefreshToken } =
-          await generateAccessAndRefreshToken(decodedRefresh.userId);
-
-        const accessTokenOptions = {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "None",
-          maxAge: 24 * 60 * 60 * 1000 // 1 day
-        };
-
-        const refreshTokenOptions = {
-          httpOnly: true,
-          secure: true,
-          sameSite: "None",
-          maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        };
-
-        res.cookie("accessToken", accessToken, accessTokenOptions);
-        res.cookie("refreshToken", newRefreshToken, refreshTokenOptions);
-
-        // Optionally, attach the decoded access token payload to req.user
-        req.user = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-        return next();
-      } catch (refreshError) {
-        console.log("Refresh token error:", refreshError);
-        return next(new ApiError(403, "Refresh token expired or invalid"));
-      }
+      // expired → fall through to refresh
     }
-
-    // If the error is not due to expiration
-    return next(new ApiError(403, "Invalid token"));
   }
+
+  // 3) No valid access token → try refresh
+  if (refreshToken) {
+    try {
+      const decodedRefresh = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+
+      // (Optional) verify refreshToken against DB here
+
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+        await generateAccessAndRefreshToken(decodedRefresh.userId);
+
+      const isProd = process.env.NODE_ENV === "production";
+
+      const accessTokenOptions = {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? "None" : "Lax",
+        maxAge: 24 * 60 * 60 * 1000 // 1 day
+      };
+      const refreshTokenOptions = {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? "None" : "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 day
+      };
+
+      res
+        .cookie("accessToken",newAccessToken,accessTokenOptions)
+        .cookie("refreshToken", newRefreshToken, refreshTokenOptions);
+
+      req.user = jwt.verify(newAccessToken, process.env.ACCESS_TOKEN_SECRET);
+      return next();
+    } catch (refreshErr) {
+      console.log("Refresh token error:", refreshErr);
+      return next(new ApiError(403, "Invalid or expired refresh token"));
+    }
+  }
+
+  // 4) Neither token worked
+  return next(new ApiError(401, "Authentication required"));
 };

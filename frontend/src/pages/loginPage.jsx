@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../services/authContext.jsx";
 import api from "../services/api.js";
@@ -8,6 +8,20 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    api
+      .get("/user/profile")
+      .then((res) => {
+        const user = res.data.data;
+        if (user) {
+          navigate("/chat");
+        }
+      })
+      .catch(() => {
+        // no valid session — stay here
+      });
+  }, [navigate, setUser]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
