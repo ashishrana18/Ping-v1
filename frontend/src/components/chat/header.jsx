@@ -56,8 +56,8 @@ function Header({ onMenuClick }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    api.get("/auth/logout");
+  const handleLogout = async () => {
+    await api.get("/auth/logout");
     setUser(null);
     navigate("/");
   };

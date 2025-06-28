@@ -77,17 +77,19 @@ const loginUser = asyncHandler(async (req, res) => {
       }
     });
 
+    let isProd= process.env.NODE_ENV === "production";
+
     const accessTokenOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // set to true if using https
-      sameSite: "None",
+      secure: isProd, // set to true if using https
+      sameSite: isProd ? "None" : "Lax",
       maxAge: 24 * 60 * 60 * 1000 // 1 day
     };
 
     const refreshTokenOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      secure: isProd,
+      sameSite: isProd ? "None" : "Lax",
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
 
@@ -110,10 +112,12 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   await client.del(`online:${userId}`);
 
+  let isProd = process.env.NODE_ENV === "production";
+
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", //this is true in production(HTTPS)
-    sameSite: "none"
+    secure: isProd, //this is true in production(HTTPS)
+    sameSite: isProd ? "None" : "Lax"
   };
 
   return res
