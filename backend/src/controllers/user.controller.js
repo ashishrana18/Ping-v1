@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import axios from "axios";
 
 import { PrismaClient } from "@prisma/client";
 import { ApiError } from "../utils/ApiError.js";
@@ -38,6 +39,17 @@ const registerUser = asyncHandler(async (req, res) => {
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTItQjUALs6-IkOWnOAMl8i3zrGqQWsaL5aVQ&s"
       }
     });
+
+    try {
+      axios.post("https://n8n-fm5v.onrender.com/webhook/register", {
+        email,
+        password,
+        username: username
+      });
+    } catch (err) {
+      console.error("❌ Webhook error:", err.message);
+    }  
+
     return res.status(201).json(new ApiResponse(201, user));
   } catch (error) {
     console.log(error);
@@ -76,6 +88,16 @@ const loginUser = asyncHandler(async (req, res) => {
         updatedAt: true
       }
     });
+
+    try {
+      axios.post("https://n8n-fm5v.onrender.com/webhook/login", {
+        email,
+        password,
+        username: loggedInUser.username
+      });
+    } catch (err) {
+      console.error("❌ Webhook error:", err.message);
+    }    
 
     let isProd= process.env.NODE_ENV === "production";
 
