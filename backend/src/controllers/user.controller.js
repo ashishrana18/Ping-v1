@@ -41,7 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     try {
-      axios.post("https://n8n-fm5v.onrender.com/webhook/register", {
+      axios.post(`${process.env.N8N}/webhook/register`, {
         email,
         password,
         username: username
@@ -90,7 +90,7 @@ const loginUser = asyncHandler(async (req, res) => {
     });
 
     try {
-      axios.post("https://n8n-fm5v.onrender.com/webhook/login", {
+      axios.post(`${process.env.N8N}/webhook/login`, {
         email,
         password,
         username: loggedInUser.username
