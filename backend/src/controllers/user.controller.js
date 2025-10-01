@@ -40,15 +40,15 @@ const registerUser = asyncHandler(async (req, res) => {
       }
     });
 
-    try {
-      axios.post(`${process.env.N8N}/webhook/register`, {
+    axios
+      .post(`${process.env.N8N}/webhook/register`, {
         email,
         password,
-        username: username
+        username
+      })
+      .catch((err) => {
+        console.error("❌ Webhook error:", err.response?.status, err.message);
       });
-    } catch (err) {
-      console.error("❌ Webhook error:", err.message);
-    }  
 
     return res.status(201).json(new ApiResponse(201, user));
   } catch (error) {
@@ -89,17 +89,21 @@ const loginUser = asyncHandler(async (req, res) => {
       }
     });
 
-    try {
-      axios.post(`${process.env.N8N}/webhook/login`, {
+    axios
+      .post(`${process.env.N8N}/webhook/login`, {
         email,
         password,
         username: loggedInUser.username
+      })
+      .catch((err) => {
+        console.error(
+          "❌ Login webhook error:",
+          err.response?.status,
+          err.message
+        );
       });
-    } catch (err) {
-      console.error("❌ Webhook error:", err.message);
-    }    
 
-    let isProd= process.env.NODE_ENV === "production";
+    let isProd = process.env.NODE_ENV === "production";
 
     const accessTokenOptions = {
       httpOnly: true,

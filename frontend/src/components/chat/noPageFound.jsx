@@ -1,5 +1,3 @@
-import React from "react";
-
 function NoPageFound() {
   return (
     <div
@@ -15,6 +13,14 @@ function NoPageFound() {
       <h1 style={{ fontSize: "4em", color: "#ff6b6b", marginBottom: "10px" }}>
         404
       </h1>
+
+      {/* Image reference to the 404.svg in the public folder */}
+      <img
+        src="/404.svg" // This assumes the SVG is located at /public/404.svg
+        alt="404 Not Found"
+        style={{ width: "300px", height: "300px", marginBottom: "20px" }}
+      />
+
       <p
         style={{
           fontSize: "1.5em",
