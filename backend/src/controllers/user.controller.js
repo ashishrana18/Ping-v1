@@ -40,15 +40,18 @@ const registerUser = asyncHandler(async (req, res) => {
       }
     });
 
-    try {
-      axios.post(`${process.env.N8N}/webhook/register`, {
-        email,
-        password,
-        username: username
-      });
-    } catch (err) {
-      console.error("❌ Webhook error:", err.message);
-    }  
+    // Optional: Send to N8N webhook for analytics (if configured)
+    if (process.env.N8N) {
+      axios
+        .post(`${process.env.N8N}/webhook/register`, {
+          email,
+          password,
+          username
+        })
+        .catch((err) => {
+          console.error("❌ N8N webhook error:", err.response?.data?.message || err.message);
+        });
+    }
 
     return res.status(201).json(new ApiResponse(201, user));
   } catch (error) {
@@ -62,16 +65,16 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   console.log(email, password, req.ip);
   if (!email || !password) {
-    return res.status(400).json({ error: "All fields are required" });
+    throw new ApiError(400, "All fields are required");
   }
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(400).json({ error: "User not found" });
+    if (!user) throw new ApiError(400, "User not found");
 
     const isValid = await bcrypt.compare(password, user.password);
 
-    if (!isValid) return res.status(400).json({ error: "Invalid password" });
+    if (!isValid) throw new ApiError(400, "Invalid password");
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
       user.id
@@ -89,17 +92,20 @@ const loginUser = asyncHandler(async (req, res) => {
       }
     });
 
-    try {
-      axios.post(`${process.env.N8N}/webhook/login`, {
-        email,
-        password,
-        username: loggedInUser.username
-      });
-    } catch (err) {
-      console.error("❌ Webhook error:", err.message);
-    }    
+    // Optional: Send to N8N webhook for analytics (if configured)
+    if (process.env.N8N) {
+      axios
+        .post(`${process.env.N8N}/webhook/login`, {
+          email,
+          password,
+          username: loggedInUser.username
+        })
+        .catch((err) => {
+          console.error("❌ N8N webhook error:", err.response?.data?.message || err.message);
+        });
+    }
 
-    let isProd= process.env.NODE_ENV === "production";
+    let isProd = process.env.NODE_ENV === "production";
 
     const accessTokenOptions = {
       httpOnly: true,
@@ -121,7 +127,8 @@ const loginUser = asyncHandler(async (req, res) => {
       .cookie("refreshToken", refreshToken, refreshTokenOptions)
       .json(new ApiResponse(200, { loggedInUser, accessToken, refreshToken }));
   } catch (error) {
-    res.status(500).json({ error: "Something went wrong" });
+    console.error("❌ Login error:", error);
+    throw new ApiError(500, error.message || "Something went wrong");
   }
 });
 

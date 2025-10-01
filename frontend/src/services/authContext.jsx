@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react";
 import api from "../services/api.js";
-import { ApiError } from "../../../backend/src/utils/ApiError.js";
 
 export const AuthContext = createContext();
 
@@ -21,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         })
         .catch((error) => {
           setUser(null);
-          throw new ApiError(400, "User not fetched!", error);
+          console.error("User not fetched:", error);
         })
         .finally(() => setLoading(false));
     } else {
