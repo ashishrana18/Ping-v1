@@ -12,7 +12,7 @@ import { slidingWindowRateLimiter } from "../middlewares/rateLimiter.js";
 const router = Router();
 const rateLimiter = slidingWindowRateLimiter({
   windowSizeInSeconds: 60, // 1 minute
-  maxRequests: 40 // max 10 req/min per user/IP
+  maxRequests: 150 // max 150 req/min per user/IP
 });
 
 router.post("/create", verifyJWT, rateLimiter, createChat);

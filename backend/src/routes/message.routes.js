@@ -8,7 +8,7 @@ import { slidingWindowRateLimiter } from "../middlewares/rateLimiter.js";
 const router = Router();
 const rateLimiter = slidingWindowRateLimiter({
   windowSizeInSeconds: 60, // 1 minute
-  maxRequests: 100 // max 30 req/min per user/IP
+  maxRequests: 300 // max 300 req/min per user/IP (messages are fetched frequently)
 });
 
 // GET messages for a specific chat/room
