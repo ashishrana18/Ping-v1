@@ -10,7 +10,7 @@ import {
 const router = Router();
 const rateLimiter = slidingWindowRateLimiter({
   windowSizeInSeconds: 60, // 1 minute
-  maxRequests: 10 // max 10 login attempts per minute (prevent brute force)
+  maxRequests: 30 // max 10 login attempts per minute (prevent brute force)
 });
 
 // Register Route
