@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 import { AuthContext } from "../../services/authContext.jsx";
-import { FiPlus, FiCamera, FiLogOut } from "react-icons/fi";
+import { FiPlus, FiCamera, FiLogOut, FiUser } from "react-icons/fi";
 import { ChangeAvatarModal } from "./changeAvatarModal.jsx";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 
@@ -11,8 +11,11 @@ function Header({ onMenuClick }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showChangeAvatarModal, setShowChangeAvatarModal] = useState(false);
+  const [showChangeUsernameModal, setShowChangeUsernameModal] = useState(false);
+  const [newUsername, setNewUsername] = useState(user?.username || "");
   const menuRef = useRef(null);
   const [darkMode, setDarkMode] = useState(false);
+  const [error, setError] = useState("");
 
   // Check local storage for theme preference on initial load and apply dark mode if set
   // This runs only once when the component mounts
@@ -67,13 +70,35 @@ function Header({ onMenuClick }) {
     setMenuOpen(false);
   };
 
-  // Instead of navigating, open the modal for changing avatar
   const handleOpenChangeAvatar = () => {
     setShowChangeAvatarModal(true);
     setMenuOpen(false);
   };
 
-  // Use default avatar if user.avatar is missing
+  const handleOpenChangeUsername = () => {
+    setNewUsername(user?.username || "");
+    setShowChangeUsernameModal(true);
+    setMenuOpen(false);
+  };
+
+  const handleUpdateUsername = async () => {
+    try {
+      const res = await api.post("/user/updateUsername", {
+        newUsername: newUsername
+      });
+      if (res.data?.data.updatedUser) {
+        setUser(res.data.updatedUser);
+      }
+      setShowChangeUsernameModal(false);
+    } catch (err) {
+      if (err.response?.status === 400) {
+        setError(err.response.data?.data?.message || "Username already exists!");
+      } else {
+        setError("Failed to update username");
+      }
+    }
+  };
+
   const profilePicture =
     user && user.avatar
       ? user.avatar
@@ -129,7 +154,7 @@ function Header({ onMenuClick }) {
             </span>
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50">
+            <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50">
               <button
                 onClick={handleCreateChat}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -145,11 +170,18 @@ function Header({ onMenuClick }) {
                 <span>Change Avatar</span>
               </button>
               <button
+                onClick={handleOpenChangeUsername}
+                className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                <FiUser className="mr-2" size={20} />
+                <span>Change Username</span>
+              </button>
+              <button
                 onClick={toggleDarkMode}
-                className="w-full flex items-center text-left px-2 py-2  dark:border-gray-700 transition-all"
+                className="w-full flex items-center text-left px-2 py-2 dark:border-gray-700 transition-all"
               >
                 {darkMode ? (
-                  <SunIcon className="h-6 w-6  text-yellow-400" />
+                  <SunIcon className="h-6 w-6 text-yellow-400" />
                 ) : (
                   <MoonIcon className="h-6 w-6 text-gray-800" />
                 )}
@@ -166,17 +198,49 @@ function Header({ onMenuClick }) {
           )}
         </div>
       </header>
+
+      {/* Modals */}
       {showChangeAvatarModal && (
         <ChangeAvatarModal
           currentAvatar={profilePicture}
           onClose={() => setShowChangeAvatarModal(false)}
           onUpload={(responseData) => {
-            if (responseData.updatedUser) {
-              setUser(responseData.updatedUser);
-            }
+            if (responseData.updatedUser) setUser(responseData.updatedUser);
             setShowChangeAvatarModal(false);
           }}
         />
+      )}
+
+      {showChangeUsernameModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white dark:bg-gray-700 p-6 rounded shadow-lg w-80">
+            <h2 className="text-lg font-semibold mb-4 dark:text-white">
+              Change Username
+            </h2>
+            {error && <p className="text-red-500 mb-2">{error}</p>}
+            <input
+              type="text"
+              className="w-full px-3 py-2 mb-4 border rounded dark:bg-gray-600 dark:text-white"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              placeholder="Enter new username"
+            />
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowChangeUsernameModal(false)}
+                className="px-4 py-2 border rounded text-black dark:text-white bg-white dark:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateUsername}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

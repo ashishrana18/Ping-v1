@@ -325,6 +325,35 @@ const updateAvatar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { updatedUser, url }, "done"));
 });
 
+const updateUsername = asyncHandler(async (req,res) => {
+  const { newUsername } = req.body;
+  const isUserExists = await prisma.user.findUnique({
+    where: {
+      username: newUsername
+    }
+  })===null ? false : true;
+  if(isUserExists){
+    throw new ApiError(400, "Username already exists!");
+  }
+  const user = await prisma.user.findUnique({
+    where:{
+      id: req.user?.userId
+    }
+  })
+  if(!user){
+    throw new ApiError(400, "User not found!");
+  }
+  const updatedUser = await prisma.user.update({
+    where:{id: user.id},
+    data:{
+      username: newUsername
+    }
+  })
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { updatedUser }, "Username updated successfully"));
+})
+
 export {
   registerUser,
   loginUser,
@@ -333,5 +362,6 @@ export {
   getUserProfile,
   getAllChats,
   isOnline,
-  updateAvatar
+  updateAvatar,
+  updateUsername
 };
