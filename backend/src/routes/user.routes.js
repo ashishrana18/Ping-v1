@@ -4,7 +4,8 @@ import {
   searchUsers,
   getAllChats,
   isOnline,
-  updateAvatar
+  updateAvatar,
+  updateUsername
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.js";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
@@ -27,5 +28,6 @@ router.post(
   upload.single("avatar"),
   updateAvatar
 );
+router.post("/updateUsername", verifyJWT, updateUsername);
 
 export { router as userRouter };
