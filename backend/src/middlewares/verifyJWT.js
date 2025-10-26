@@ -52,7 +52,7 @@ export const verifyJWT = async (req, res, next) => {
       };
 
       res
-        .cookie("accessToken",newAccessToken,accessTokenOptions)
+        .cookie("accessToken", newAccessToken, accessTokenOptions)
         .cookie("refreshToken", newRefreshToken, refreshTokenOptions);
 
       req.user = jwt.verify(newAccessToken, process.env.ACCESS_TOKEN_SECRET);

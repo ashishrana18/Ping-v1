@@ -18,7 +18,7 @@ export function slidingWindowRateLimiter({
       const key = `rate:${id}`;
 
       // add current timestamp
-      await client.zAdd(key, { score: now, value: `${now}` });
+      await client.zAdd(key, { value: `${now}`, score: now });
       // remove all older than window
       await client.zRemRangeByScore(key, 0, windowStart);
       // count how many remain
