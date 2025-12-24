@@ -82,18 +82,56 @@ function Header({ onMenuClick }) {
   };
 
   const handleUpdateUsername = async () => {
+    console.log(
+      "Header@handleUpdateUsername: start",
+      "currentUser:",
+      user,
+      "newUsername:",
+      newUsername
+    );
     try {
       const res = await api.post("/user/updateUsername", {
         newUsername: newUsername
       });
-      if (res.data?.data.updatedUser) {
-        setUser(res.data.updatedUser);
+      console.log(
+        "Header@handleUpdateUsername: response received",
+        "status:",
+        res?.status,
+        "data:",
+        res?.data
+      );
+      if (res?.data?.data?.updatedUser) {
+        console.log(
+          "Header@handleUpdateUsername: updatedUser present",
+          res.data.data.updatedUser
+        );
+        setUser(res.data.data.updatedUser);
+      } else {
+        console.log(
+          "Header@handleUpdateUsername: NO updatedUser in response",
+          res?.data
+        );
       }
       setShowChangeUsernameModal(false);
+      console.log("Header@handleUpdateUsername: modal closed successfully");
     } catch (err) {
-      if (err.response?.status === 400) {
-        setError(err.response.data?.data?.message || "Username already exists!");
+      console.log(
+        "Header@handleUpdateUsername: ERROR",
+        "message:",
+        err?.message,
+        "responseStatus:",
+        err?.response?.status,
+        "responseData:",
+        err?.response?.data
+      );
+      if (err?.response?.status === 400) {
+        setError(
+          err?.response?.data?.data?.message || "Username already exists!"
+        );
       } else {
+        console.log(
+          "Header@handleUpdateUsername: non-400 error, setting generic error message"
+        );
         setError("Failed to update username");
       }
     }
