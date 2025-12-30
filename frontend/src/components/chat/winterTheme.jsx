@@ -52,7 +52,7 @@ export function SantaCap() {
     <img
       src="/santa.png"
       alt="Santa Cap"
-      className="absolute -top-2 -right-3 w-6 h-6 object-contain"
+      className="absolute -top-3.5 -right-4 w-8 h-8 object-contain"
     />
   );
 }

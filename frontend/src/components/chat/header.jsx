@@ -140,7 +140,7 @@ function Header({ onMenuClick }) {
         <div className="flex items-center space-x-4 relative z-10">
           <button
             onClick={() => navigate("/chat", { state: {} })}
-            className="text-xl font-bold relative"
+            className="text-2xl font-bold relative"
           >
             Ping
             {/* Temporary Winter Theme - Remove after winter season */}
