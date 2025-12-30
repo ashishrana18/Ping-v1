@@ -7,7 +7,7 @@ function AllChats() {
   const [loading, setLoading] = useState(true);
   const [activeChatId, setActiveChatId] = useState(null);
 
-  useEffect(() => {
+  const fetchChats = () => {
     api
       .get("/user/allChats")
       .then((response) => {
@@ -30,6 +30,21 @@ function AllChats() {
         console.error("Error fetching chats:", error);
       })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchChats();
+
+    // Listen for nickname updates
+    const handleNicknameUpdate = () => {
+      fetchChats();
+    };
+    
+    window.addEventListener('nicknameUpdated', handleNicknameUpdate);
+    
+    return () => {
+      window.removeEventListener('nicknameUpdated', handleNicknameUpdate);
+    };
   }, []);
 
   return (
@@ -43,7 +58,7 @@ function AllChats() {
           const displayName = !object.chat.isGroup
             ? (object.friend &&
                 (object.friend.nickname
-                  ? object.friend.nickname
+                  ? `${object.friend.nickname} [${object.friend.username}]`
                   : object.friend.username)) ||
               "Unnamed Chat"
             : object.chat.name || "Unnamed Group";

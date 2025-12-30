@@ -158,4 +158,54 @@ const updateAvatar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { updatedChat, url }, "done"));
 });
 
-export { createChat, search, chatMembers, updateAvatar };
+const updateNickname = asyncHandler(async (req, res) => {
+  const { chatId, userId, nickname } = req.body;
+  const currentUserId = req.user?.userId;
+
+  if (!chatId || !userId) {
+    throw new ApiError(400, "Chat ID and User ID are required!");
+  }
+
+  // Verify that the current user is a member of this chat
+  const currentUserMember = await prisma.chatMember.findUnique({
+    where: {
+      userId_chatId: { userId: currentUserId, chatId }
+    }
+  });
+
+  if (!currentUserMember) {
+    throw new ApiError(403, "You are not a member of this chat!");
+  }
+
+  // Find the chat member (userId is the friend's userId)
+  const chatMember = await prisma.chatMember.findUnique({
+    where: {
+      userId_chatId: { userId, chatId }
+    }
+  });
+
+  if (!chatMember) {
+    throw new ApiError(404, "Chat member not found!");
+  }
+
+  // Update the nickname for the friend
+  const updatedMember = await prisma.chatMember.update({
+    where: {
+      userId_chatId: { userId, chatId }
+    },
+    data: {
+      nickname: nickname || null
+    },
+    include: {
+      user: {
+        select: { id: true, username: true, avatar: true }
+      }
+    }
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { chatMember: updatedMember }, "Nickname updated successfully"));
+});
+
+export { createChat, search, chatMembers, updateAvatar, updateNickname };

@@ -265,7 +265,13 @@ const getAllChats = asyncHandler(async (req, res) => {
         select: { id: true, username: true, avatar: true }
       });
       if (friend) {
-        friends.push({ chat, friend });
+        friends.push({ 
+          chat, 
+          friend: {
+            ...friend,
+            nickname: otherChatMember.nickname // Add the nickname from ChatMember
+          }
+        });
       }
     }
   }
