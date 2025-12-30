@@ -1,7 +1,27 @@
 // Temporary winter theme component - can be removed after winter season
-import React from "react";
+import { useEffect, useState } from "react";
 
 export function WinterTheme() {
+  const [isDark, setIsDark] = useState(false);
+
+  // Check for dark mode
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    
+    checkDarkMode();
+    
+    // Watch for dark mode changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+    
+    return () => observer.disconnect();
+  }, []);
+
   // Generate snowflakes for winter theme
   const snowflakes = Array.from({ length: 20 }, (_, i) => ({
     id: i,
@@ -29,7 +49,7 @@ export function WinterTheme() {
       {snowflakes.map((snowflake) => (
         <div
           key={snowflake.id}
-          className="absolute text-white opacity-70 dark:opacity-50"
+          className="absolute opacity-70 dark:opacity-50"
           style={{
             left: `${snowflake.left}%`,
             top: '-10px',
@@ -37,7 +57,9 @@ export function WinterTheme() {
             animationDuration: `${snowflake.duration}s`,
             fontSize: `${snowflake.size}px`,
             animation: 'snowfall linear infinite',
-            animationTimingFunction: 'linear'
+            animationTimingFunction: 'linear',
+            filter: isDark ? 'none' : 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(200deg) brightness(104%) contrast(97%)',
+            WebkitFilter: isDark ? 'none' : 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(200deg) brightness(104%) contrast(97%)'
           }}
         >
           ❄
