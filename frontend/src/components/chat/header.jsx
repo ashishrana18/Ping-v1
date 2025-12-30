@@ -5,6 +5,7 @@ import { AuthContext } from "../../services/authContext.jsx";
 import { FiPlus, FiCamera, FiLogOut, FiUser } from "react-icons/fi";
 import { ChangeAvatarModal } from "./changeAvatarModal.jsx";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
+import { WinterTheme, SantaCap } from "./winterTheme.jsx";
 
 function Header({ onMenuClick }) {
   const { user, setUser, loading } = useContext(AuthContext);
@@ -109,10 +110,14 @@ function Header({ onMenuClick }) {
 
   return (
     <>
-      <header className="sticky top-0 z-100 p-4 border-b bg-white dark:bg-gray-800 dark:text-primary flex justify-between items-center">
+      <header className="sticky top-0 z-50 p-4 border-b bg-white dark:bg-gray-800 dark:text-primary flex justify-between items-center relative">
+        {/* Temporary Winter Theme - Remove after winter season */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <WinterTheme />
+        </div>
         {onMenuClick && (
           <button
-            className="md:hidden p-2 mr-2"
+            className="md:hidden p-2 mr-2 relative z-10"
             onClick={onMenuClick}
             aria-label="Toggle sidebar"
           >
@@ -132,15 +137,17 @@ function Header({ onMenuClick }) {
             </svg>
           </button>
         )}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 relative z-10">
           <button
             onClick={() => navigate("/chat", { state: {} })}
-            className="text-xl font-bold"
+            className="text-xl font-bold relative"
           >
             Ping
+            {/* Temporary Winter Theme - Remove after winter season */}
+            <SantaCap />
           </button>
         </div>
-        <div className="relative" ref={menuRef}>
+        <div className="relative z-10" ref={menuRef}>
           {/* Profile section: current user's avatar and username */}
           <button
             onClick={() => setMenuOpen((prev) => !prev)}
@@ -157,7 +164,7 @@ function Header({ onMenuClick }) {
             </span>
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50">
+            <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-[100]">
               <button
                 onClick={handleCreateChat}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
