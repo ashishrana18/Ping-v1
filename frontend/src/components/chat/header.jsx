@@ -62,6 +62,7 @@ function Header({ onMenuClick }) {
   const handleLogout = async () => {
     await api.get("/auth/logout");
     setUser(null);
+    localStorage.removeItem("accessToken");
     navigate("/");
   };
 
@@ -82,57 +83,21 @@ function Header({ onMenuClick }) {
   };
 
   const handleUpdateUsername = async () => {
-    console.log(
-      "Header@handleUpdateUsername: start",
-      "currentUser:",
-      user,
-      "newUsername:",
-      newUsername
-    );
     try {
       const res = await api.post("/user/updateUsername", {
         newUsername: newUsername
       });
-      console.log(
-        "Header@handleUpdateUsername: response received",
-        "status:",
-        res?.status,
-        "data:",
-        res?.data
-      );
-      if (res?.data?.data?.updatedUser) {
-        console.log(
-          "Header@handleUpdateUsername: updatedUser present",
-          res.data.data.updatedUser
-        );
-        setUser(res.data.data.updatedUser);
-      } else {
-        console.log(
-          "Header@handleUpdateUsername: NO updatedUser in response",
-          res?.data
-        );
+      if (res.data?.data.updatedUser) {
+        setUser(res.data.updatedUser);
       }
       setShowChangeUsernameModal(false);
-      console.log("Header@handleUpdateUsername: modal closed successfully");
     } catch (err) {
-      console.log(
-        "Header@handleUpdateUsername: ERROR",
-        "message:",
-        err?.message,
-        "responseStatus:",
-        err?.response?.status,
-        "responseData:",
-        err?.response?.data
-      );
-      if (err?.response?.status === 400) {
+      if (err.response?.status === 400) {
         setError(
-          err?.response?.data?.data?.message || "Username already exists!"
+          err.response.data?.data?.message || "Username already exists!"
         );
       } else {
-        console.log(
-          "Header@handleUpdateUsername: non-400 error, setting generic error message"
-        );
-        setError("Failed to update username");
+        setError(err.response.data?.data?.message);
       }
     }
   };

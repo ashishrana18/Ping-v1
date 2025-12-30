@@ -6,4 +6,12 @@ const api = axios.create({
   withCredentials: true // Important for sending HTTP-only cookies
 });
 
+api.interceptors.request.use((config) => {
+  // Add auth token to every request, before sending
+  const token = localStorage.getItem("accessToken");
+  if(token)  config.headers.Authorization = `Bearer ${token}`;
+  
+  return config;
+});
+
 export default api;

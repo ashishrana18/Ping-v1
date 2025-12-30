@@ -51,6 +51,7 @@ export default function LoginPage() {
       const loginResponse = await api.post("/auth/login", { email, password });
       if (loginResponse.data?.success) {
         setUser(loginResponse.data.data.loggedInUser);
+        localStorage.setItem("accessToken", loginResponse.data.data.accessToken);
         navigate("/chat");
       } else {
         setError(loginResponse.data?.message || "Login failed");
