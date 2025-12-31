@@ -5,7 +5,7 @@ import { AuthContext } from "../../services/authContext.jsx";
 import { FiPlus, FiCamera, FiLogOut, FiUser } from "react-icons/fi";
 import { ChangeAvatarModal } from "./changeAvatarModal.jsx";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
-import { WinterTheme, SantaCap } from "./winterTheme.jsx";
+import { WinterTheme, SantaCap } from "../../themes/winter/winterTheme.jsx";
 
 function Header({ onMenuClick }) {
   const { user, setUser, loading } = useContext(AuthContext);
@@ -110,14 +110,14 @@ function Header({ onMenuClick }) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 p-4 border-b bg-white dark:bg-gray-800 dark:text-primary flex justify-between items-center relative">
+      <header className="sticky top-0 z-20 p-4 border-b bg-white dark:bg-gray-800 dark:text-primary flex justify-between items-center relative">
         {/* Temporary Winter Theme - Remove after winter season */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <WinterTheme />
         </div>
         {onMenuClick && (
           <button
-            className="md:hidden p-2 mr-2 relative z-10"
+            className="md:hidden p-2 mr-2 relative z-2"
             onClick={onMenuClick}
             aria-label="Toggle sidebar"
           >

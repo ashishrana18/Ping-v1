@@ -32,7 +32,7 @@ function ChatPage() {
           className={`
             ${showSidebar ? "block" : "hidden"} 
             md:block
-            w-full md:w-64 lg:w-80 h-full fixed md:relative z-50
+            w-full md:w-64 lg:w-80 h-full fixed md:relative z-10
           `}
           onClick={() => {
             setShowSidebar(false);
