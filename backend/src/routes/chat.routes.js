@@ -3,8 +3,11 @@ import { verifyJWT } from "../middlewares/verifyJWT.js";
 import {
   chatMembers,
   createChat,
+  lockChat,
+  unlockChat,
+  isChatLocked,
   search,
-  updateAvatar
+  updateAvatar,
 } from "../controllers/chat.controller.js";
 import { upload } from "../middlewares/multer.js";
 import { slidingWindowRateLimiter } from "../middlewares/rateLimiter.js";
@@ -12,7 +15,7 @@ import { slidingWindowRateLimiter } from "../middlewares/rateLimiter.js";
 const router = Router();
 const rateLimiter = slidingWindowRateLimiter({
   windowSizeInSeconds: 60, // 1 minute
-  maxRequests: 150 // max 150 req/min per user/IP
+  maxRequests: 150, // max 150 req/min per user/IP
 });
 
 router.post("/create", verifyJWT, rateLimiter, createChat);
@@ -22,7 +25,10 @@ router.post(
   "/avatar/:chatId",
   verifyJWT,
   upload.single("avatar"),
-  updateAvatar
+  updateAvatar,
 );
+router.post("/lock/:chatId", verifyJWT, lockChat);
+router.post("/unlock/:chatId", verifyJWT, unlockChat);
+router.get("/isLocked/:chatId", verifyJWT, isChatLocked);
 
 export { router as chatRouter };

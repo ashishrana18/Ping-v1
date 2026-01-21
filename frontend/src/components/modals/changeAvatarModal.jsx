@@ -25,11 +25,11 @@ const ChangeAvatarModal = ({ currentAvatar, onClose, onUpload, chatId }) => {
       // Check if chatId is falsy (undefined, null, empty string, etc.)
       if (!chatId) {
         response = await api.post("/user/avatar", formData, {
-          headers: { "Content-Type": "multipart/form-data" }
+          headers: { "Content-Type": "multipart/form-data" },
         }); // data.data contains { updatedUser, url }
       } else {
         response = await api.post(`/chat/avatar/${chatId}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" }
+          headers: { "Content-Type": "multipart/form-data" },
         });
       }
       onUpload(response.data.data); // response.data.data contains { updatedUser, url }

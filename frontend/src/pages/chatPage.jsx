@@ -2,10 +2,12 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../services/authContext.jsx";
+import { FiPlus } from "react-icons/fi";
 import Header from "../components/chat/header.jsx";
 import AllChats from "../components/chat/allChats.jsx";
 import SingleChat from "../components/chat/singleChat.jsx";
 import ChatNavbar from "../components/chat/chatNavbar.jsx";
+import api from "../services/api.js";
 
 function ChatPage() {
   const navigate = useNavigate();
@@ -19,8 +21,29 @@ function ChatPage() {
     }
   }, [user, loading, navigate]);
 
-  const activeChat = location.state?.chat;
+  const [activeChat, setActiveChat] = useState(location.state?.chat);
   const friend = location.state?.friend;
+
+  // triggered on first mounting and switching btw diff chats
+  useEffect(() => {
+    if (location.state?.chat) {
+      const chatFromState = location.state.chat;
+      setActiveChat(chatFromState);
+
+      api
+        .get(`/chat/isLocked/${chatFromState.id}`)
+        .then((res) => {
+          const freshLocked = res.data.data;
+          if (freshLocked !== chatFromState.isLocked) {
+            // to update the stale data
+            setActiveChat((prev) => ({ ...prev, isLocked: freshLocked }));
+          }
+        })
+        .catch((err) => console.error("Failed to refresh lock status", err));
+    } else {
+      setActiveChat(null);
+    }
+  }, [location.state?.chat]);
 
   return (
     <div className="h-screen flex flex-col bg-white dark:bg-[rgb(0,17,28)] text-gray-900 dark:text-dark-text">
@@ -48,11 +71,19 @@ function ChatPage() {
               <>
                 {/* Chat Navbar Container */}
                 <div className="flex-none">
-                  <ChatNavbar chat={activeChat} friend={friend} />
+                  <ChatNavbar
+                    chat={activeChat}
+                    friend={friend}
+                    onUpdateChat={setActiveChat} //will update the activeChat, from returned lockedChat/unlockedChat apis
+                  />
                 </div>
                 {/* Single Chat Container with scroll */}
                 <div className="flex-grow overflow-y-auto">
-                  <SingleChat chat={activeChat} friend={friend} />
+                  <SingleChat
+                    chat={activeChat}
+                    friend={friend}
+                    onUpdateChat={setActiveChat} //will update the activeChat, from returned lockedChat/unlockedChat apis
+                  />
                 </div>
               </>
             ) : (
@@ -62,20 +93,7 @@ function ChatPage() {
                   onClick={() => navigate("/new-chat")}
                   className="p-4 rounded-full bg-blue-500 text-white flex items-center space-x-2 hover:bg-blue-600 dark:bg-info dark:hover:bg-blue-400"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    className="w-6 h-6"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 5v14m-7-7h14"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <FiPlus className="w-6 h-6" />
                   <span>Create New Chat</span>
                 </button>
               </div>

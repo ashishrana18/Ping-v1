@@ -5,8 +5,10 @@ import socket from "../../services/socket.js";
 import Message from "./message.jsx";
 import { AuthContext } from "../../services/authContext.jsx";
 import { ApiError } from "../../../../backend/src/utils/ApiError.js";
+import { LockChatModal } from "../modals/lockChatModal.jsx";
+import { FiLock } from "react-icons/fi";
 
-function SingleChat({ chat, friend }) {
+function SingleChat({ chat, friend, onUpdateChat }) {
   const { user } = useContext(AuthContext);
   const currentUserId = user?.id;
   const [messages, setMessages] = useState([]);
@@ -17,6 +19,7 @@ function SingleChat({ chat, friend }) {
   const [member, setMember] = useState(null); //to display which member is typing in grp
   const [isFriendTyping, setIsFriendTyping] = useState(false); //to display friend is typing or not
   const [reactionsPopup, setReactionsPopup] = useState(null);
+  const [showUnlockModal, setShowUnlockModal] = useState(false);
 
   useEffect(() => {
     if (chat && chat.id && currentUserId) {
@@ -40,7 +43,7 @@ function SingleChat({ chat, friend }) {
   }, [chat, currentUserId]);
 
   useEffect(() => {
-    if (chat && chat.id) {
+    if (chat && chat.id && !chat.isLocked) {
       api
         .get(`/messages/${chat.id}`)
         .then((response) => {
@@ -73,7 +76,7 @@ function SingleChat({ chat, friend }) {
       socket.emit("sendMessage", {
         chatId: chat.id,
         text: input,
-        senderId: currentUserId
+        senderId: currentUserId,
       });
       setInput("");
       // Optionally scroll after sending
@@ -139,11 +142,11 @@ function SingleChat({ chat, friend }) {
             // filter out prev reaction, and add the new reaction {emoji,user} to it
             reactions = [
               ...reactions.filter((r) => r.user.id !== user.id),
-              { emoji, user }
+              { emoji, user },
             ];
           }
           return { ...msg, reactions }; // this will update/overwrite the message with updated reactions
-        })
+        }),
       );
     });
     return () => {
@@ -154,7 +157,7 @@ function SingleChat({ chat, friend }) {
   const handleReaction = async (messageId, emoji) => {
     try {
       await api.post(`/messages/${messageId}/${currentUserId}`, {
-        reactionType: emoji
+        reactionType: emoji,
       });
     } catch (err) {
       console.error("Failed to react:", err);
@@ -164,6 +167,41 @@ function SingleChat({ chat, friend }) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") sendMessage();
   };
+
+  if (chat.isLocked) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full bg-gray-100 dark:bg-[#212529] text-gray-500 dark:text-gray-400">
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg flex flex-col items-center max-w-sm w-full mx-4">
+          <div className="bg-red-100 dark:bg-red-900/30 p-4 rounded-full mb-4">
+            <FiLock className="w-12 h-12 text-red-500" />
+          </div>
+          <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+            Chat Locked
+          </h2>
+          <p className="text-center mb-6">
+            This chat is locked. Enter the passcode to view and send messages.
+          </p>
+          <button
+            onClick={() => setShowUnlockModal(true)}
+            className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors font-medium w-full"
+          >
+            Unlock Chat
+          </button>
+        </div>
+
+        {showUnlockModal && (
+          <LockChatModal
+            isOpen={showUnlockModal}
+            onClose={() => setShowUnlockModal(false)}
+            chat={chat}
+            onUpdate={(updatedChat) => {
+              if (onUpdateChat) onUpdateChat(updatedChat);
+            }}
+          />
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full">
