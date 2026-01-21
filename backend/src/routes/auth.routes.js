@@ -4,13 +4,13 @@ import { slidingWindowRateLimiter } from "../middlewares/rateLimiter.js";
 import {
   loginUser,
   logoutUser,
-  registerUser
+  registerUser,
 } from "../controllers/user.controller.js";
 
 const router = Router();
 const rateLimiter = slidingWindowRateLimiter({
   windowSizeInSeconds: 60, // 1 minute
-  maxRequests: 30 // max 10 login attempts per minute (prevent brute force)
+  maxRequests: 100, // max 10 login attempts per minute (prevent brute force)
 });
 
 // Register Route

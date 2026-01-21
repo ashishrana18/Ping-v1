@@ -2,8 +2,8 @@ import React, { useEffect, useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 import { AuthContext } from "../../services/authContext.jsx";
-import { FiPlus, FiCamera, FiLogOut, FiUser } from "react-icons/fi";
-import { ChangeAvatarModal } from "./changeAvatarModal.jsx";
+import { FiPlus, FiCamera, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
+import { ChangeAvatarModal } from "../modals/changeAvatarModal.jsx";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { WinterTheme, SantaCap } from "../../themes/winter/winterTheme.jsx";
 
@@ -86,20 +86,15 @@ function Header({ onMenuClick }) {
   const handleUpdateUsername = async () => {
     try {
       const res = await api.post("/user/updateUsername", {
-        newUsername: newUsername
+        newUsername: newUsername,
       });
       if (res.data?.data.updatedUser) {
         setUser(res.data.updatedUser);
       }
       setShowChangeUsernameModal(false);
     } catch (err) {
-      if (err.response?.status === 400) {
-        setError(
-          err.response.data?.data?.message || "Username already exists!"
-        );
-      } else {
-        setError(err.response.data?.data?.message);
-      }
+      const message = err.response.data.message;
+      setError(message);
     }
   };
 
@@ -121,20 +116,7 @@ function Header({ onMenuClick }) {
             onClick={onMenuClick}
             aria-label="Toggle sidebar"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-gray-700 dark:text-gray-200"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <FiMenu className="h-6 w-6 text-gray-700 dark:text-gray-200" />
           </button>
         )}
         <div className="flex items-center space-x-4 relative z-10">

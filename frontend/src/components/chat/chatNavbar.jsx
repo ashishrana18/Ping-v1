@@ -1,11 +1,18 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import api from "../../services/api.js";
-import { FiEye, FiLock, FiCamera, FiMoreVertical } from "react-icons/fi";
+import {
+  FiEye,
+  FiLock,
+  FiCamera,
+  FiMoreVertical,
+  FiUnlock,
+} from "react-icons/fi";
 import { AuthContext } from "../../services/authContext.jsx";
-import { ChangeAvatarModal } from "./changeAvatarModal.jsx";
-import { ViewAvatarModal } from "./viewAvatarModal.jsx";
+import { ChangeAvatarModal } from "../modals/changeAvatarModal.jsx";
+import { ViewAvatarModal } from "../modals/viewAvatarModal.jsx";
+import { LockChatModal } from "../modals/lockChatModal.jsx";
 
-function ChatNavbar({ chat, friend }) {
+function ChatNavbar({ chat, friend, onUpdateChat }) {
   const { setUser } = useContext(AuthContext);
   // Local state for the current chat (for group chats)
   const [currentChat, setCurrentChat] = useState(chat);
@@ -14,6 +21,7 @@ function ChatNavbar({ chat, friend }) {
   const [showChangeAvatarModal, setShowChangeAvatarModal] = useState(false);
   const [showViewAvatarModal, setShowViewAvatarModal] = useState(false);
   const [showSecretChatModal, setShowSecretChatModal] = useState(false);
+  const [showLockChatModal, setShowLockChatModal] = useState(false);
   const menuRef = useRef(null);
 
   // Update local chat state when the prop changes
@@ -53,7 +61,7 @@ function ChatNavbar({ chat, friend }) {
       setShowSecretChatModal(true);
     } else {
       alert(
-        "Friend is offline. Secret chat can only be started when the friend is online."
+        "Friend is offline. Secret chat can only be started when the friend is online.",
       );
     }
     setDropdownOpen(false);
@@ -134,6 +142,22 @@ function ChatNavbar({ chat, friend }) {
                   <span>Start Secret Chat</span>
                 </button>
               )}
+              <button
+                onClick={() => {
+                  setShowLockChatModal(true);
+                  setDropdownOpen(false);
+                }}
+                className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500"
+              >
+                {currentChat?.isLocked ? (
+                  <FiUnlock className="mr-2" size={20} />
+                ) : (
+                  <FiLock className="mr-2" size={20} />
+                )}
+                <span>
+                  {currentChat?.isLocked ? "Unlock Chat" : "Lock Chat"}
+                </span>
+              </button>
             </div>
           )}
         </div>
@@ -167,24 +191,23 @@ function ChatNavbar({ chat, friend }) {
 
       {/* Secret Chat Modal */}
       {showSecretChatModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 dark:text-info backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-md max-w-sm">
-            <h2 className="text-xl font-bold mb-4">
-              Secret Chat Under Construction
-            </h2>
-            <p className="mb-4">
-              This feature is currently under construction.
-            </p>
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowSecretChatModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 dark:text-black"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+        <SecretChatModal
+          isOpen={showSecretChatModal}
+          onClose={() => setShowSecretChatModal(false)}
+        />
+      )}
+
+      {/* Lock/Unlock Chat Modal */}
+      {showLockChatModal && (
+        <LockChatModal
+          isOpen={showLockChatModal}
+          onClose={() => setShowLockChatModal(false)}
+          chat={currentChat}
+          onUpdate={(updatedChat) => {
+            setCurrentChat(updatedChat);
+            if (onUpdateChat) onUpdateChat(updatedChat);
+          }}
+        />
       )}
     </>
   );

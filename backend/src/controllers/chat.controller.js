@@ -13,7 +13,7 @@ const createChat = asyncHandler(async (req, res) => {
   if (chatId) {
     const existingChat = await prisma.chat.findUnique({
       where: { id: chatId },
-      include: { members: true }
+      include: { members: true },
     });
     if (existingChat) {
       return res
@@ -24,14 +24,14 @@ const createChat = asyncHandler(async (req, res) => {
 
   if (!isGroup) {
     newChat = await prisma.chat.create({
-      data: { id: chatId, isGroup: false }
+      data: { id: chatId, isGroup: false },
     });
 
     await prisma.chatMember.createMany({
       data: [
         { userId: members[0], chatId: chatId },
-        { userId: members[1], chatId: chatId }
-      ]
+        { userId: members[1], chatId: chatId },
+      ],
     });
   } else {
     console.log("inside group creation");
@@ -40,11 +40,11 @@ const createChat = asyncHandler(async (req, res) => {
         name: name,
         isGroup: true,
         avatar:
-          "https://png.pngtree.com/png-clipart/20190620/original/pngtree-vector-leader-of-group-icon-png-image_4022100.jpg"
+          "https://png.pngtree.com/png-clipart/20190620/original/pngtree-vector-leader-of-group-icon-png-image_4022100.jpg",
       },
       include: {
-        members: true
-      }
+        members: true,
+      },
     });
 
     if (newChat == null) {
@@ -53,7 +53,7 @@ const createChat = asyncHandler(async (req, res) => {
 
     for (let i = 0; i < members.length; i++) {
       await prisma.chatMember.create({
-        data: { userId: members[i], chatId: newChat.id }
+        data: { userId: members[i], chatId: newChat.id },
       });
     }
   }
@@ -70,9 +70,9 @@ const search = asyncHandler(async (req, res) => {
   const groupsPromise = prisma.chat.findMany({
     where: {
       isGroup: true,
-      name: { contains: query, mode: "insensitive" }
+      name: { contains: query, mode: "insensitive" },
     },
-    select: { id: true, name: true, avatar: true, isGroup: true }
+    select: { id: true, name: true, avatar: true, isGroup: true },
   });
 
   let usersPromise = prisma.user.findMany({
@@ -81,13 +81,13 @@ const search = asyncHandler(async (req, res) => {
         {
           OR: [
             { username: { contains: query, mode: "insensitive" } },
-            { email: { contains: query, mode: "insensitive" } }
-          ]
+            { email: { contains: query, mode: "insensitive" } },
+          ],
         },
-        { id: { not: req.user?.userId } }
-      ]
+        { id: { not: req.user?.userId } },
+      ],
     },
-    select: { id: true, username: true, email: true, avatar: true }
+    select: { id: true, username: true, email: true, avatar: true },
   });
 
   // this is just to make query faster, so userPromise call dont have to wait
@@ -104,10 +104,10 @@ const chatMembers = asyncHandler(async (req, res) => {
     include: {
       members: {
         include: {
-          user: true
-        }
-      }
-    }
+          user: true,
+        },
+      },
+    },
   });
 
   return res.status(200).json(new ApiResponse(200, members));
@@ -122,8 +122,8 @@ const updateAvatar = asyncHandler(async (req, res) => {
 
   const chat = await prisma.chat.findUnique({
     where: {
-      id: chatId
-    }
+      id: chatId,
+    },
   });
 
   if (!chat) {
@@ -146,11 +146,11 @@ const updateAvatar = asyncHandler(async (req, res) => {
 
   const updatedChat = await prisma.chat.update({
     where: {
-      id: chatId
+      id: chatId,
     },
     data: {
-      avatar: cloudinaryURL
-    }
+      avatar: cloudinaryURL,
+    },
   });
 
   return res
@@ -158,4 +158,82 @@ const updateAvatar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { updatedChat, url }, "done"));
 });
 
-export { createChat, search, chatMembers, updateAvatar };
+const isChatLocked = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+
+  const chat = await prisma.chat.findUnique({ where: { id: chatId } });
+
+  if (!chat) {
+    throw new ApiError(400, "Chat not found!");
+  }
+
+  return res.status(200).json(new ApiResponse(200, chat.isLocked));
+});
+
+const lockChat = asyncHandler(async (req, res) => {
+  const { passcode } = req.body;
+  const { chatId } = req.params;
+
+  const chat = await prisma.chat.findUnique({ where: { id: chatId } });
+
+  if (!chat) {
+    throw new ApiError(400, "Chat not found!");
+  }
+
+  const lockedChat = await prisma.chat.update({
+    where: {
+      id: chatId,
+    },
+    data: {
+      isLocked: true,
+      passcode: passcode,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { lockedChat }, "updated passcode"));
+});
+
+const unlockChat = asyncHandler(async (req, res) => {
+  const { passcode } = req.body;
+  const { chatId } = req.params;
+
+  const chat = await prisma.chat.findUnique({ where: { id: chatId } });
+
+  if (!chat) {
+    throw new ApiError(400, "Chat not found!");
+  }
+
+  if (!chat.isLocked) {
+    throw new ApiError(400, "Chat is not locked!");
+  }
+
+  if (chat.passcode !== passcode) {
+    throw new ApiError(401, "Incorrect passcode!");
+  }
+
+  const unlockedChat = await prisma.chat.update({
+    where: {
+      id: chatId,
+    },
+    data: {
+      isLocked: false,
+      passcode: null,
+    },
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { unlockedChat }, "Chat unlocked successfully"));
+});
+
+export {
+  createChat,
+  search,
+  chatMembers,
+  updateAvatar,
+  lockChat,
+  unlockChat,
+  isChatLocked,
+};

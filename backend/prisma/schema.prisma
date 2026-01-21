@@ -27,6 +27,8 @@ model Chat {
   name      String?
   createdAt DateTime     @default(now())
   avatar    String?
+  isLocked  Boolean      @default(false)
+  passcode  String?
   members   ChatMember[]
   messages  Message[]
 }
