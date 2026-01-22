@@ -9,10 +9,18 @@ const prisma = new PrismaClient();
 export const setupSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: process.env.CORS_ORIGIN, // Explicit frontend URL
+      origin: (origin, callback) => {
+        const isLocal = origin === "http://localhost:5173";
+        const isVercel = origin && origin.endsWith(".vercel.app");
+
+        if (!origin || isLocal || isVercel) {
+          return callback(null, true);
+        }
+        return callback(null, false);
+      },
       methods: ["GET", "POST"],
-      credentials: true
-    }
+      credentials: true,
+    },
     // pingInterval: 10000, // ← MATCH CLIENT
     // pingTimeout: 5000 // ← MATCH CLIENT
   });
@@ -23,7 +31,7 @@ export const setupSocket = (server) => {
     socket.on("joinRoom", async (data) => {
       const { chatId } = data;
       console.log(
-        `user is connected with another user, having chatId : ${chatId}`
+        `user is connected with another user, having chatId : ${chatId}`,
       );
       socket.join(chatId);
     });
@@ -37,13 +45,13 @@ export const setupSocket = (server) => {
           const savedMessage = await createMessage({
             text,
             senderId,
-            chatId // Ensure chatId corresponds to an existing chat
+            chatId, // Ensure chatId corresponds to an existing chat
           });
           console.log("Message saved:", savedMessage);
 
           const sender = await prisma.user.findUnique({
             where: { id: senderId },
-            select: { username: true, avatar: true }
+            select: { username: true, avatar: true },
           });
 
           io.to(chatId).emit("receiveMessage", {
@@ -53,7 +61,7 @@ export const setupSocket = (server) => {
             senderName: sender.username,
             senderAvatar: sender.avatar,
             sentAt: savedMessage.createdAt,
-            chatId: savedMessage.chatId
+            chatId: savedMessage.chatId,
           });
 
           console.log("Message sent to chat:", chatId);
@@ -62,7 +70,7 @@ export const setupSocket = (server) => {
             "Error saving message from socket",
             socket.id,
             ":",
-            error
+            error,
           );
           socket.emit("errorMessage", { error: "Message could not be saved" });
         }
@@ -78,7 +86,7 @@ export const setupSocket = (server) => {
       } catch (error) {
         console.error(
           "Error while setting online status of user :",
-          error.message
+          error.message,
         );
       }
     });
@@ -99,7 +107,7 @@ export const setupSocket = (server) => {
         io.to(chatId).emit("receiveSecretMessage", {
           userId,
           msg,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
         console.log("Secret message sent to room:", chatId);
       } catch (error) {

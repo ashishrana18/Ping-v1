@@ -8,11 +8,10 @@ const app = express();
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = ["http://localhost:5173"];
-      const isAllowedLocal = allowedOrigins.includes(origin);
-      const isVercel = origin.endsWith(".vercel.app");
+      const isLocal = origin === "http://localhost:5173";
+      const isVercel = origin?.endsWith(".vercel.app");
 
-      if (!origin || isAllowedLocal || isVercel) {
+      if (!origin || isLocal || isVercel) {
         callback(null, true);
       } else {
         callback(new ApiError(403, "Not allowed by CORS"));
