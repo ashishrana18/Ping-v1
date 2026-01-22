@@ -2,16 +2,27 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import errorHandler from "./middlewares/errorHandler.js";
+import ApiError from "./utils/ApiError.js";
 
 const app = express();
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: (origin, callback) => {
+      const allowedOrigins = ["http://localhost:5173"];
+      const isAllowedLocal = allowedOrigins.includes(origin);
+      const isVercel = origin.endsWith(".vercel.app");
+
+      if (!origin || isAllowedLocal || isVercel) {
+        callback(null, true);
+      } else {
+        callback(new ApiError(403, "Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['set-cookie']
-  })
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["set-cookie"],
+  }),
 );
 
 app.use(express.json({ limit: "20kb" }));
