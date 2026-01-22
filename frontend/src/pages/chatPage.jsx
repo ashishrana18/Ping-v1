@@ -80,6 +80,7 @@ function ChatPage() {
                 {/* Single Chat Container with scroll */}
                 <div className="flex-grow overflow-y-auto">
                   <SingleChat
+                    key={activeChat.id}
                     chat={activeChat}
                     friend={friend}
                     onUpdateChat={setActiveChat} //will update the activeChat, from returned lockedChat/unlockedChat apis

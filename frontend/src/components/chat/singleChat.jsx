@@ -44,6 +44,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
 
   useEffect(() => {
     if (chat && chat.id && !chat.isLocked) {
+      setMessages([]);
       api
         .get(`/messages/${chat.id}`)
         .then((response) => {
@@ -52,6 +53,8 @@ function SingleChat({ chat, friend, onUpdateChat }) {
           }
         })
         .catch((err) => console.error("Error fetching messages:", err));
+    } else {
+      setMessages([]);
     }
   }, [chat]);
 
@@ -210,16 +213,17 @@ function SingleChat({ chat, friend, onUpdateChat }) {
         ref={containerRef}
         className="flex-grow overflow-y-auto pl-5 pr-6 pt-5 pb-3 bg-gray-100 dark:bg-[#212529]  space-y-2 pb-24 "
       >
-        {messages.map((msg, index) => (
-          <Message
-            key={`${msg.id}-${index}`}
-            message={msg}
-            isGroup={chat.isGroup}
-            isOwnMessage={msg.senderId === currentUserId}
-            onReact={handleReaction}
-            onShowReactions={(messageId) => setReactionsPopup(messageId)}
-          />
-        ))}
+        {messages &&
+          messages.map((msg, index) => (
+            <Message
+              key={`${msg.id}-${index}`}
+              message={msg}
+              isGroup={chat.isGroup}
+              isOwnMessage={msg.senderId === currentUserId}
+              onReact={handleReaction}
+              onShowReactions={(messageId) => setReactionsPopup(messageId)}
+            />
+          ))}
         <div ref={messagesEndRef} />
         {reactionsPopup && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
