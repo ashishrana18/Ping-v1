@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/verifyJWT.js";
 import {
-  chatMembers,
+  groupMembers,
   createChat,
   lockChat,
   unlockChat,
@@ -20,7 +20,7 @@ const rateLimiter = slidingWindowRateLimiter({
 
 router.post("/create", verifyJWT, rateLimiter, createChat);
 router.get("/search", verifyJWT, rateLimiter, search);
-router.get("/members", verifyJWT, rateLimiter, chatMembers);
+router.get("/members/:chatId", verifyJWT, groupMembers);
 router.post(
   "/avatar/:chatId",
   verifyJWT,

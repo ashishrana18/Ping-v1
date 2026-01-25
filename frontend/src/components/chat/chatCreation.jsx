@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 
+import { Avatar } from "primereact/avatar";
+
 function ChatCreation({ currentUserId }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState({ groups: [], users: [] });
@@ -47,7 +49,7 @@ function ChatCreation({ currentUserId }) {
       const response = await api.post("/chat/create", {
         chatId: newChatId,
         isGroup: false,
-        members: [currentUserId, friend.id]
+        members: [currentUserId, friend.id],
       });
       navigate("/chat", { state: { chat: response.data.data, friend } });
     } catch (error) {
@@ -78,7 +80,7 @@ function ChatCreation({ currentUserId }) {
       const response = await api.post("/chat/create", {
         isGroup: true,
         name: groupName,
-        members: groupMembers.map((user) => user.id).concat(currentUserId)
+        members: groupMembers.map((user) => user.id).concat(currentUserId),
       });
       console.log("Group chat response:", response.data);
       navigate("/chat", { state: { chat: response.data.data } });
@@ -110,10 +112,25 @@ function ChatCreation({ currentUserId }) {
                 onClick={() => handleDirectChatClick(user)}
                 className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors"
               >
-                <img
-                  src={user.avatar}
-                  alt={user.username}
-                  className="w-10 h-10 rounded-full mr-4"
+                <Avatar
+                  image={user?.avatar}
+                  label={user?.username?.[0]?.toUpperCase()}
+                  className="shrink-0 overflow-hidden"
+                  shape="circle"
+                  imagestyle={{
+                    objectFit: "cover",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  style={{
+                    backgroundColor: "#2196F3",
+                    marginRight: "12px",
+                    color: "#ffffff",
+                    width: "44px",
+                    height: "44px",
+                    fontSize: "1.5rem",
+                    fontWeight: "bold",
+                  }}
                 />
                 <div>
                   <div className="font-semibold text-gray-900 dark:text-subtext">

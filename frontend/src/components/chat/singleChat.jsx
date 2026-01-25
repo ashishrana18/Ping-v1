@@ -6,7 +6,10 @@ import Message from "./message.jsx";
 import { AuthContext } from "../../services/authContext.jsx";
 import { ApiError } from "../../../../backend/src/utils/ApiError.js";
 import { LockChatModal } from "../modals/lockChatModal.jsx";
+
 import { FiLock } from "react-icons/fi";
+import { Avatar } from "primereact/avatar";
+import { Skeleton } from "primereact/skeleton";
 
 function SingleChat({ chat, friend, onUpdateChat }) {
   const { user } = useContext(AuthContext);
@@ -20,6 +23,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
   const [isFriendTyping, setIsFriendTyping] = useState(false); //to display friend is typing or not
   const [reactionsPopup, setReactionsPopup] = useState(null);
   const [showUnlockModal, setShowUnlockModal] = useState(false);
+  const [loadingMessages, setLoadingMessages] = useState(true);
 
   useEffect(() => {
     if (chat && chat.id && currentUserId) {
@@ -44,6 +48,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
 
   useEffect(() => {
     if (chat && chat.id && !chat.isLocked) {
+      setLoadingMessages(true);
       api
         .get(`/messages/${chat.id}`)
         .then((response) => {
@@ -51,7 +56,8 @@ function SingleChat({ chat, friend, onUpdateChat }) {
             setMessages(response.data.data);
           }
         })
-        .catch((err) => console.error("Error fetching messages:", err));
+        .catch((err) => console.error("Error fetching messages:", err))
+        .finally(() => setLoadingMessages(false));
     }
   }, [chat]);
 
@@ -210,16 +216,41 @@ function SingleChat({ chat, friend, onUpdateChat }) {
         ref={containerRef}
         className="flex-grow overflow-y-auto pl-5 pr-6 pt-5 pb-3 bg-gray-100 dark:bg-[#212529]  space-y-2 pb-24 "
       >
-        {messages.map((msg, index) => (
-          <Message
-            key={`${msg.id}-${index}`}
-            message={msg}
-            isGroup={chat.isGroup}
-            isOwnMessage={msg.senderId === currentUserId}
-            onReact={handleReaction}
-            onShowReactions={(messageId) => setReactionsPopup(messageId)}
-          />
-        ))}
+        {loadingMessages ? (
+          <div className="space-y-4">
+            {[150, 105, 125, 180, 180, 148, 125, 160, 205, 110].map(
+              (width, i) => (
+                <div
+                  key={i}
+                  className={`flex gap-2 ${
+                    i % 2 === 0 ? "justify-start" : "justify-end text-right"
+                  }`}
+                >
+                  {i % 2 === 0 && chat.isGroup && (
+                    <Skeleton shape="circle" size="32px" className="shrink-0" />
+                  )}
+                  <Skeleton
+                    width={`${width}px`}
+                    height="2.5rem"
+                    borderRadius="15px"
+                    style={{ backgroundColor: "#d2d9e0ff" }}
+                  />
+                </div>
+              ),
+            )}
+          </div>
+        ) : (
+          messages.map((msg, index) => (
+            <Message
+              key={`${msg.id}-${index}`}
+              message={msg}
+              isGroup={chat.isGroup}
+              isOwnMessage={msg.senderId === currentUserId}
+              onReact={handleReaction}
+              onShowReactions={(messageId) => setReactionsPopup(messageId)}
+            />
+          ))
+        )}
         <div ref={messagesEndRef} />
         {reactionsPopup && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -234,10 +265,28 @@ function SingleChat({ chat, friend, onUpdateChat }) {
                       key={i}
                       className="flex items-center gap-3 p-2 hover:bg-gray-800 rounded-md"
                     >
-                      <img
-                        src={r.user.avatar}
-                        alt={r.user.username}
-                        className="w-8 h-8 rounded-full object-cover"
+                      <Avatar
+                        image={r.user.avatar}
+                        label={
+                          !r.user.avatar
+                            ? r.user.username[0].toUpperCase()
+                            : null
+                        }
+                        shape="circle"
+                        className="shrink-0 overflow-hidden"
+                        imageStyle={{
+                          objectFit: "cover",
+                          width: "100%",
+                          height: "100%",
+                        }}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          backgroundColor: !r.user.avatar
+                            ? "#2196F3"
+                            : "transparent",
+                          color: "#ffffff",
+                        }}
                       />
                       <span className="font-medium text-white">
                         {r.user.username}

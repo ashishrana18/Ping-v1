@@ -3,12 +3,14 @@ import Picker from "emoji-picker-react";
 import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 
+import { Avatar } from "primereact/avatar";
+
 export default function Message({
   message,
   isOwnMessage,
   isGroup,
   onReact,
-  onShowReactions
+  onShowReactions,
 }) {
   const time = format(new Date(message.sentAt || message.createdAt), "hh:mm a");
 
@@ -75,10 +77,20 @@ export default function Message({
     >
       {/* Avatar for group messages */}
       {!isOwnMessage && isGroup && (
-        <img
-          src={message.senderAvatar}
-          alt={message.senderName}
-          className="w-8 h-8 rounded-full shrink-0"
+        <Avatar
+          image={message.senderAvatar}
+          label={
+            !message.senderAvatar ? message.senderName[0].toUpperCase() : null
+          }
+          shape="circle"
+          className="shrink-0 overflow-hidden [&_img]:object-cover [&_img]:w-full [&_img]:h-full"
+          style={{
+            width: "32px",
+            height: "32px",
+            backgroundColor: !message.senderAvatar ? "#2196F3" : "transparent",
+            color: "#ffffff",
+            fontSize: "1rem",
+          }}
         />
       )}
 
@@ -126,7 +138,7 @@ export default function Message({
           onClick={(e) => e.stopPropagation()}
           style={{
             top: pickerStyles.top,
-            left: pickerStyles.left
+            left: pickerStyles.left,
           }}
           className=" bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2"
         >

@@ -1,5 +1,13 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import api from "../../services/api.js";
+import { AuthContext } from "../../services/authContext.jsx";
+import { ChangeAvatarModal } from "../modals/changeAvatarModal.jsx";
+import { ViewAvatarModal } from "../modals/viewAvatarModal.jsx";
+import { LockChatModal } from "../modals/lockChatModal.jsx";
+import GroupMembers from "./groupMembers.jsx";
+
+import { Avatar } from "primereact/avatar";
+import { Skeleton } from "primereact/skeleton";
 import {
   FiEye,
   FiLock,
@@ -7,10 +15,6 @@ import {
   FiMoreVertical,
   FiUnlock,
 } from "react-icons/fi";
-import { AuthContext } from "../../services/authContext.jsx";
-import { ChangeAvatarModal } from "../modals/changeAvatarModal.jsx";
-import { ViewAvatarModal } from "../modals/viewAvatarModal.jsx";
-import { LockChatModal } from "../modals/lockChatModal.jsx";
 
 function ChatNavbar({ chat, friend, onUpdateChat }) {
   const { setUser } = useContext(AuthContext);
@@ -48,13 +52,11 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
   // Use currentChat for groups; for one-on-one chats, use friend
   const isGroup = currentChat?.isGroup;
   const displayName = isGroup
-    ? currentChat?.name || "Unnamed Group"
-    : (friend && (friend.nickname || friend.username)) || "Unnamed Chat";
+    ? currentChat?.name
+    : friend && (friend.nickname || friend.username);
   const profilePicture = isGroup
-    ? currentChat?.avatar ||
-      "https://png.pngtree.com/png-clipart/20190620/original/pngtree-vector-leader-of-group-icon-png-image_4022100.jpg"
-    : (friend && friend.avatar) ||
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTItQjUALs6-IkOWnOAMl8i3zrGqQWsaL5aVQ&s";
+    ? currentChat?.avatar
+    : friend && friend.avatar;
 
   const handleStartSecretChat = () => {
     if (onlineStatus) {
@@ -87,21 +89,42 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
     <>
       <div className="top-0 z-10 flex items-center justify-between p-4 border-b bg-white text-gray-900 dark:bg-[rgb(0,7,28)] dark:text-white">
         <div className="flex items-center">
-          <img
-            src={profilePicture}
-            alt={displayName}
-            className="w-10 h-10 rounded-full mr-4"
+          <Avatar
+            image={profilePicture}
+            label={displayName?.[0].toUpperCase()}
+            className={`shrink-0 overflow-hidden ${profilePicture ? "border border-gray-200 dark:border-gray-800" : ""}`}
+            shape="circle"
+            style={{
+              width: "44px",
+              height: "44px",
+              aspectRatio: "1/1",
+              backgroundColor: !profilePicture ? "#2196F3" : "transparent",
+              color: "#ffffff",
+              fontSize: "1.5rem",
+              fontWeight: "semibold",
+            }}
+            imageStyle={{
+              objectFit: "cover",
+              width: "100%",
+              height: "100%",
+            }}
           />
-          <div className="flex flex-col">
-            <h2 className="text-lg font-bold">{displayName}</h2>
-            {!isGroup && onlineStatus !== null && (
-              <p
-                className={`text-sm ${
-                  onlineStatus ? "text-green-500" : "text-gray-500"
-                }`}
-              >
-                {onlineStatus ? "Online" : "Offline"}
-              </p>
+          <div className="flex flex-col ml-2">
+            <h2 className="text-lg ml-[5px] font-bold">{displayName}</h2>
+            {!isGroup ? (
+              onlineStatus === null ? (
+                <Skeleton shape="rectangle" width={54} height={20} />
+              ) : (
+                <p
+                  className={`text-sm ml-[5px] ${
+                    onlineStatus ? "text-green-500" : "text-gray-500"
+                  }`}
+                >
+                  {onlineStatus ? "Online" : "Offline"}
+                </p>
+              )
+            ) : (
+              <GroupMembers chat={chat} />
             )}
           </div>
         </div>

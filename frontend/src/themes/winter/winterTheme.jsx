@@ -7,18 +7,18 @@ export function WinterTheme() {
   // Check for dark mode
   useEffect(() => {
     const checkDarkMode = () => {
-      setIsDark(document.documentElement.classList.contains('dark'));
+      setIsDark(document.documentElement.classList.contains("dark"));
     };
-    
+
     checkDarkMode();
-    
+
     // Watch for dark mode changes
     const observer = new MutationObserver(checkDarkMode);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class']
+      attributeFilter: ["class"],
     });
-    
+
     return () => observer.disconnect();
   }, []);
 
@@ -28,7 +28,7 @@ export function WinterTheme() {
     left: Math.random() * 100,
     delay: Math.random() * 5,
     duration: 3 + Math.random() * 4,
-    size: 4 + Math.random() * 4
+    size: 4 + Math.random() * 4,
   }));
 
   return (
@@ -52,14 +52,19 @@ export function WinterTheme() {
           className="absolute opacity-70 dark:opacity-50"
           style={{
             left: `${snowflake.left}%`,
-            top: '-10px',
+            top: "-10px",
             animationDelay: `${snowflake.delay}s`,
             animationDuration: `${snowflake.duration}s`,
             fontSize: `${snowflake.size}px`,
-            animation: 'snowfall linear infinite',
-            animationTimingFunction: 'linear',
-            filter: isDark ? 'none' : 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(200deg) brightness(104%) contrast(97%)',
-            WebkitFilter: isDark ? 'none' : 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(200deg) brightness(104%) contrast(97%)'
+            animationName: "snowfall",
+            animationIterationCount: "infinite",
+            animationTimingFunction: "linear",
+            filter: isDark
+              ? "none"
+              : "brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(200deg) brightness(104%) contrast(97%)",
+            WebkitFilter: isDark
+              ? "none"
+              : "brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(200deg) brightness(104%) contrast(97%)",
           }}
         >
           ❄
@@ -78,4 +83,3 @@ export function SantaCap() {
     />
   );
 }
-
