@@ -2,12 +2,13 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../services/authContext.jsx";
-import { FiPlus } from "react-icons/fi";
 import Header from "../components/chat/header.jsx";
 import AllChats from "../components/chat/allChats.jsx";
 import SingleChat from "../components/chat/singleChat.jsx";
 import ChatNavbar from "../components/chat/chatNavbar.jsx";
 import api from "../services/api.js";
+
+import { FiPlus } from "react-icons/fi";
 
 function ChatPage() {
   const navigate = useNavigate();
@@ -49,13 +50,14 @@ function ChatPage() {
     <div className="h-screen flex flex-col bg-white dark:bg-[rgb(0,17,28)] text-gray-900 dark:text-dark-text">
       <Header onMenuClick={() => setShowSidebar((v) => !v)} />
       {/* Main content area */}
-      <div className="flex flex-grow overflow-hidden">
+      <div className="flex flex-grow overflow-hidden relative">
         {/* Sidebar for AllChats */}
         <aside
           className={`
             ${showSidebar ? "block" : "hidden"} 
             md:block
-            w-full md:w-64 lg:w-80 h-full fixed md:relative z-10
+            w-full md:w-64 lg:w-80 h-full absolute md:relative z-20
+            bg-white dark:bg-gray-900 border-r dark:border-gray-700
           `}
           onClick={() => {
             setShowSidebar(false);

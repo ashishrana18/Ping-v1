@@ -21,8 +21,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const existingUser = await prisma.user.findFirst({
     where: {
-      OR: [{ email }, { username }]
-    }
+      OR: [{ email }, { username }],
+    },
   });
 
   if (existingUser) {
@@ -35,9 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
         email,
         username,
         password: hashedPassword,
-        avatar:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTItQjUALs6-IkOWnOAMl8i3zrGqQWsaL5aVQ&s"
-      }
+      },
     });
 
     // Optional: Send to N8N webhook for analytics (if configured)
@@ -46,10 +44,13 @@ const registerUser = asyncHandler(async (req, res) => {
         .post(`${process.env.N8N}/webhook/register`, {
           email,
           password,
-          username
+          username,
         })
         .catch((err) => {
-          console.error("❌ N8N webhook error:", err.response?.data?.message || err.message);
+          console.error(
+            "❌ N8N webhook error:",
+            err.response?.data?.message || err.message,
+          );
         });
     }
 
@@ -77,7 +78,7 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!isValid) throw new ApiError(400, "Invalid password");
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-      user.id
+      user.id,
     );
     const loggedInUser = await prisma.user.findUnique({
       where: { id: user.id },
@@ -88,8 +89,8 @@ const loginUser = asyncHandler(async (req, res) => {
         avatar: true,
         refreshToken: true,
         createdAt: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     });
 
     // Optional: Send to N8N webhook for analytics (if configured)
@@ -98,10 +99,13 @@ const loginUser = asyncHandler(async (req, res) => {
         .post(`${process.env.N8N}/webhook/login`, {
           email,
           password,
-          username: loggedInUser.username
+          username: loggedInUser.username,
         })
         .catch((err) => {
-          console.error("❌ N8N webhook error:", err.response?.data?.message || err.message);
+          console.error(
+            "❌ N8N webhook error:",
+            err.response?.data?.message || err.message,
+          );
         });
     }
 
@@ -111,14 +115,14 @@ const loginUser = asyncHandler(async (req, res) => {
       httpOnly: true,
       secure: isProd, // set to true if using https
       sameSite: isProd ? "None" : "Lax",
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     };
 
     const refreshTokenOptions = {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "None" : "Lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     };
 
     return res
@@ -136,7 +140,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   const { userId } = req.user;
   await prisma.user.update({
     where: { id: userId },
-    data: { refreshToken: null }
+    data: { refreshToken: null },
   });
 
   await client.del(`online:${userId}`);
@@ -146,7 +150,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: isProd, //this is true in production(HTTPS)
-    sameSite: isProd ? "None" : "Lax"
+    sameSite: isProd ? "None" : "Lax",
   };
 
   return res
@@ -167,8 +171,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
       email: true,
       createdAt: true,
       updatedAt: true,
-      avatar: true
-    }
+      avatar: true,
+    },
   });
 
   if (!user) {
@@ -192,13 +196,13 @@ const searchUsers = asyncHandler(async (req, res) => {
         {
           OR: [
             { username: { contains: query, mode: "insensitive" } },
-            { email: { contains: query, mode: "insensitive" } }
-          ]
+            { email: { contains: query, mode: "insensitive" } },
+          ],
         },
-        { id: { not: req.user?.userId } }
-      ]
+        { id: { not: req.user?.userId } },
+      ],
     },
-    select: { id: true, username: true, email: true, avatar: true }
+    select: { id: true, username: true, email: true, avatar: true },
   });
   res.status(200).json(new ApiResponse(200, users, "Users found"));
 });
@@ -214,25 +218,25 @@ const getAllChats = asyncHandler(async (req, res) => {
             include: {
               members: {
                 include: {
-                  user: true
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  user: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 
   const chats =
     userWithChats?.chats.map((chatMember) => {
       const chat = chatMember.chat;
       const otherMembers = chat.members.filter(
-        (member) => member.userId !== req.user?.userId
+        (member) => member.userId !== req.user?.userId,
       );
       return {
         chatId: chat.id,
-        members: otherMembers.map((member) => member.user) // array of user objects
+        members: otherMembers.map((member) => member.user), // array of user objects
       };
     }) || [];
 
@@ -240,8 +244,8 @@ const getAllChats = asyncHandler(async (req, res) => {
   const allChats = await prisma.user.findUnique({
     where: { id: req.user?.userId },
     include: {
-      chats: true
-    }
+      chats: true,
+    },
   });
 
   const chatIdArray = allChats.chats.map((chat) => chat.chatId);
@@ -251,18 +255,18 @@ const getAllChats = asyncHandler(async (req, res) => {
     const chatId = chatIdArray[i];
     const chat = await prisma.chat.findUnique({
       where: { id: chatId },
-      include: { members: true }
+      include: { members: true },
     });
 
     const otherChatMembers = chat.members.filter(
-      (member) => member.userId != req.user?.userId
+      (member) => member.userId != req.user?.userId,
     );
 
     for (let j = 0; j < otherChatMembers.length; j++) {
       const otherChatMember = otherChatMembers[j];
       const friend = await prisma.user.findUnique({
         where: { id: otherChatMember.userId },
-        select: { id: true, username: true, avatar: true }
+        select: { id: true, username: true, avatar: true },
       });
       if (friend) {
         friends.push({ chat, friend });
@@ -279,6 +283,8 @@ const isOnline = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const onlineStatus = await client.get(`online:${userId}`);
   const isOnline = onlineStatus === "true";
+
+  //returns true/false
   return res.status(200).json(isOnline);
 });
 
@@ -289,8 +295,8 @@ const updateAvatar = asyncHandler(async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: {
-      id: req.user?.userId
-    }
+      id: req.user?.userId,
+    },
   });
 
   if (!user) {
@@ -313,11 +319,11 @@ const updateAvatar = asyncHandler(async (req, res) => {
 
   const updatedUser = await prisma.user.update({
     where: {
-      id: user.id
+      id: user.id,
     },
     data: {
-      avatar: cloudinaryURL
-    }
+      avatar: cloudinaryURL,
+    },
   });
 
   return res
@@ -325,34 +331,39 @@ const updateAvatar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { updatedUser, url }, "done"));
 });
 
-const updateUsername = asyncHandler(async (req,res) => {
+const updateUsername = asyncHandler(async (req, res) => {
   const { newUsername } = req.body;
-  const isUserExists = await prisma.user.findUnique({
-    where: {
-      username: newUsername
-    }
-  })===null ? false : true;
-  if(isUserExists){
+  const isUserExists =
+    (await prisma.user.findUnique({
+      where: {
+        username: newUsername,
+      },
+    })) === null
+      ? false
+      : true;
+  if (isUserExists) {
     throw new ApiError(400, "Username already exists!");
   }
   const user = await prisma.user.findUnique({
-    where:{
-      id: req.user?.userId
-    }
-  })
-  if(!user){
+    where: {
+      id: req.user?.userId,
+    },
+  });
+  if (!user) {
     throw new ApiError(400, "User not found!");
   }
   const updatedUser = await prisma.user.update({
-    where:{id: user.id},
-    data:{
-      username: newUsername
-    }
-  })
+    where: { id: user.id },
+    data: {
+      username: newUsername,
+    },
+  });
   return res
     .status(200)
-    .json(new ApiResponse(200, { updatedUser }, "Username updated successfully"));
-})
+    .json(
+      new ApiResponse(200, { updatedUser }, "Username updated successfully"),
+    );
+});
 
 export {
   registerUser,
@@ -363,5 +374,5 @@ export {
   getAllChats,
   isOnline,
   updateAvatar,
-  updateUsername
+  updateUsername,
 };
