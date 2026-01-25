@@ -10,7 +10,7 @@ import {
 const router = Router();
 const rateLimiter = slidingWindowRateLimiter({
   windowSizeInSeconds: 60, // 1 minute
-  maxRequests: process.env.NODE_ENV === "development" ? 1000 : 200,
+  maxRequests: 200,
 });
 
 // Register Route
