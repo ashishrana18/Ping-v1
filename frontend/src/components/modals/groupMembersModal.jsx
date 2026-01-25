@@ -51,7 +51,7 @@ const GroupMembersModal = ({ members, onClose }) => {
                 image={member.avatar}
                 size="normal"
                 shape="circle"
-                className="mr-2 shrink-0 overflow-hidden"
+                className="mr-2 shrink-0 text-lg font-medium overflow-hidden bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200"
                 imagestyle={{
                   objectFit: "cover",
                   width: "100%",

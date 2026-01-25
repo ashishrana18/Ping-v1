@@ -42,17 +42,8 @@ function AllChats() {
         <div className="flex flex-col space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex items-center p-2 border-b">
-              <Skeleton
-                shape="circle"
-                size="40px"
-                className="shrink-0 mr-3"
-                style={{ backgroundColor: "#e2e8f0" }}
-              />
-              <Skeleton
-                width="70%"
-                height="1rem"
-                style={{ backgroundColor: "#e2e8f0" }}
-              />
+              <Skeleton shape="circle" size="40px" className="shrink-0 mr-3" />
+              <Skeleton width="70%" height="1rem" />
             </div>
           ))}
         </div>

@@ -68,7 +68,7 @@ function GroupMembers({ chat }) {
                 image={member.avatar}
                 size="normal"
                 shape="circle"
-                className={`mr-2 shrink-0 overflow-hidden ${member.avatar ? "border border-gray-200 dark:border-gray-800" : ""}`}
+                className={`mr-2 shrink-0 overflow-hidden text-md bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200 ${member.avatar ? "border border-gray-200 dark:border-gray-800" : ""}`}
                 imagestyle={{
                   objectFit: "cover",
                   width: "100%",
@@ -88,8 +88,8 @@ function GroupMembers({ chat }) {
                 label={`+${groupMembers.length - 5}`}
                 size="normal"
                 shape="circle"
+                className="font-medium bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200"
                 style={{
-                  color: "#616161ff",
                   width: "30px",
                   height: "30px",
                   aspectRatio: "1/1",

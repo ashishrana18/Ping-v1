@@ -105,7 +105,7 @@ function Header({ onMenuClick }) {
 
   return (
     <>
-      <header className="sticky top-0 z-20 p-4 border-b bg-white dark:bg-gray-800 dark:text-primary flex justify-between items-center relative">
+      <header className="sticky top-0 z-20 p-4 border-b bg-white dark:bg-gray-900 dark:text-primary flex justify-between items-center relative">
         {/* Temporary Winter Theme - Remove after winter season */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <WinterTheme />
@@ -143,7 +143,6 @@ function Header({ onMenuClick }) {
                   shape="circle"
                   size="44px"
                   className="absolute inset-0"
-                  style={{ backgroundColor: "#d2d9e0ff" }}
                 />
               ) : (
                 <Avatar
@@ -171,11 +170,7 @@ function Header({ onMenuClick }) {
             {/* Username Section: Stable container with large text */}
             <div className="relative h-10 flex items-center min-w-[100px]">
               {loading ? (
-                <Skeleton
-                  width="104px"
-                  height="1.5rem"
-                  style={{ backgroundColor: "#d2d9e0ff" }}
-                />
+                <Skeleton width="104px" height="1.5rem" />
               ) : (
                 <span className="text-xl ml-1 font-semibold w-15 text-gray-900 dark:text-white truncate max-w-[100px] ml-1">
                   {user?.username}

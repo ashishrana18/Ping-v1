@@ -227,12 +227,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
                   }`}
                 >
                   {i % 2 === 0 && chat.isGroup && (
-                    <Skeleton
-                      shape="circle"
-                      size="32px"
-                      className="shrink-0"
-                      style={{ backgroundColor: "#d2d9e0ff" }}
-                    />
+                    <Skeleton shape="circle" size="32px" className="shrink-0" />
                   )}
                   <Skeleton
                     width={`${width}px`}
