@@ -2,10 +2,13 @@ import React, { useEffect, useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 import { AuthContext } from "../../services/authContext.jsx";
-import { FiPlus, FiCamera, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
 import { ChangeAvatarModal } from "../modals/changeAvatarModal.jsx";
-import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { WinterTheme, SantaCap } from "../../themes/winter/winterTheme.jsx";
+
+import { FiPlus, FiCamera, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
+import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
+import { Avatar } from "primereact/avatar";
+import { Skeleton } from "primereact/skeleton";
 
 function Header({ onMenuClick }) {
   const { user, setUser, loading } = useContext(AuthContext);
@@ -98,10 +101,7 @@ function Header({ onMenuClick }) {
     }
   };
 
-  const profilePicture =
-    user && user.avatar
-      ? user.avatar
-      : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTItQjUALs6-IkOWnOAMl8i3zrGqQWsaL5aVQ&s";
+  const profilePicture = user && user.avatar ? user.avatar : null;
 
   return (
     <>
@@ -133,17 +133,55 @@ function Header({ onMenuClick }) {
           {/* Profile section: current user's avatar and username */}
           <button
             onClick={() => setMenuOpen((prev) => !prev)}
-            className="flex items-center p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="flex items-center justify-center p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             title="Profile Menu"
           >
-            <img
-              src={profilePicture}
-              alt={user ? user.username : "User"}
-              className="w-10 h-10 rounded-full mr-2"
-            />
-            <span className="text-lg font-medium text-gray-900 dark:text-white">
-              {user ? user.username : "User"}
-            </span>
+            {/* Avatar Section: Unified at 48px */}
+            <div className="relative shrink-0 w-[44px] h-[44px] mr-3">
+              {loading ? (
+                <Skeleton
+                  shape="circle"
+                  size="44px"
+                  className="absolute inset-0"
+                  style={{ backgroundColor: "#d2d9e0ff" }}
+                />
+              ) : (
+                <Avatar
+                  image={user?.avatar}
+                  label={user?.username?.[0]?.toUpperCase()}
+                  className={`shrink-0 overflow-hidden ${user?.avatar ? "border border-gray-200 dark:border-gray-800" : ""}`}
+                  shape="circle"
+                  imagestyle={{
+                    objectFit: "cover",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  style={{
+                    backgroundColor: "#2196F3",
+                    color: "#ffffff",
+                    width: "44px",
+                    height: "44px",
+                    fontSize: "1.5rem",
+                    fontWeight: "bold",
+                  }}
+                />
+              )}
+            </div>
+
+            {/* Username Section: Stable container with large text */}
+            <div className="relative h-10 flex items-center min-w-[100px]">
+              {loading ? (
+                <Skeleton
+                  width="104px"
+                  height="1.5rem"
+                  style={{ backgroundColor: "#d2d9e0ff" }}
+                />
+              ) : (
+                <span className="text-xl ml-1 font-semibold w-15 text-gray-900 dark:text-white truncate max-w-[100px] ml-1">
+                  {user?.username}
+                </span>
+              )}
+            </div>
           </button>
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-[100]">

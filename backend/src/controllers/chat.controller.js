@@ -34,13 +34,10 @@ const createChat = asyncHandler(async (req, res) => {
       ],
     });
   } else {
-    console.log("inside group creation");
     newChat = await prisma.chat.create({
       data: {
         name: name,
         isGroup: true,
-        avatar:
-          "https://png.pngtree.com/png-clipart/20190620/original/pngtree-vector-leader-of-group-icon-png-image_4022100.jpg",
       },
       include: {
         members: true,
@@ -97,20 +94,29 @@ const search = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, { groups, users }));
 });
 
-const chatMembers = asyncHandler(async (req, res) => {
-  const { chatId } = req.body;
-  const members = await prisma.chat.findUnique({
+const groupMembers = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+  const chat = await prisma.chat.findUnique({
     where: { id: chatId },
     include: {
       members: {
         include: {
-          user: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              avatar: true,
+              email: true,
+            },
+          },
         },
       },
     },
   });
 
-  return res.status(200).json(new ApiResponse(200, members));
+  const groupMembers = chat.members.map((member) => member.user);
+
+  return res.status(200).json(new ApiResponse(200, groupMembers));
 });
 
 const updateAvatar = asyncHandler(async (req, res) => {
@@ -231,7 +237,7 @@ const unlockChat = asyncHandler(async (req, res) => {
 export {
   createChat,
   search,
-  chatMembers,
+  groupMembers,
   updateAvatar,
   lockChat,
   unlockChat,
