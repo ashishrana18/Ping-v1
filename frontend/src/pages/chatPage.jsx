@@ -10,6 +10,14 @@ import api from "../services/api.js";
 
 import { FiPlus } from "react-icons/fi";
 
+/**
+ * Render the chat page UI with header, chats sidebar, and active chat area; enforces auth redirect.
+ *
+ * If a chat is provided via location state, sets it as the active chat and refreshes its locked
+ * status from the API. Redirects to "/" when no authenticated user is present.
+ *
+ * @returns {JSX.Element} The ChatPage component layout.
+ */
 function ChatPage() {
   const navigate = useNavigate();
   const location = useLocation();

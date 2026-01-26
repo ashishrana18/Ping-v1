@@ -5,6 +5,19 @@ import api from "../../services/api.js";
 import { Avatar } from "primereact/avatar";
 import { Skeleton } from "primereact/skeleton";
 
+/**
+ * Render a scrollable list of the user's chats with loading and empty states.
+ *
+ * Fetches chat items from the API endpoint "/user/allChats" on mount and whenever
+ * the currently selected chat id from location.state changes. The fetched data
+ * is deduplicated by chat.id before being displayed. While loading, skeleton
+ * placeholders are shown; when no chats exist a simple empty message is rendered.
+ *
+ * Each chat item displays an avatar and a display name (friend's nickname or username for direct messages, group name for group chats)
+ * and links to the chat view, passing `{ chat, friend }` via route state.
+ *
+ * @returns {JSX.Element} A React element containing the chats list and its states.
+ */
 function AllChats() {
   const location = useLocation();
   const [chats, setChats] = useState([]);
