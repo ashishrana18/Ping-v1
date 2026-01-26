@@ -5,7 +5,7 @@ import api from "../../services/api.js";
 
 import { Avatar } from "primereact/avatar";
 
-function ChatCreation({ currentUserId }) {
+function CreateChat({ currentUserId }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState({ groups: [], users: [] });
   const [chatType, setChatType] = useState("direct"); // "direct" or "group"
@@ -207,4 +207,4 @@ function ChatCreation({ currentUserId }) {
   );
 }
 
-export default ChatCreation;
+export default CreateChat;
