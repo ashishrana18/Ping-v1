@@ -87,7 +87,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
 
   return (
     <>
-      <div className="top-0 z-10 flex items-center justify-between p-4 border-b bg-white text-gray-900 dark:bg-[rgb(0,7,28)] dark:text-white">
+      <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b bg-white text-gray-900 dark:bg-[rgb(0,7,28)] dark:text-white">
         <div className="flex items-center">
           <Avatar
             image={profilePicture}

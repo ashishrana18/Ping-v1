@@ -68,7 +68,7 @@ function ChatPage() {
 
         {/* Chat area */}
         {!showSidebar && (
-          <main className="flex flex-col flex-grow h-full overflow-hidden">
+          <main className="flex flex-col flex-grow min-h-0 overflow-hidden">
             {activeChat ? (
               <>
                 {/* Chat Navbar Container */}
@@ -79,8 +79,8 @@ function ChatPage() {
                     onUpdateChat={setActiveChat} //will update the activeChat, from returned lockedChat/unlockedChat apis
                   />
                 </div>
-                {/* Single Chat Container with scroll */}
-                <div className="flex-grow overflow-y-auto">
+                {/* Single Chat Container - scrolling handled inside SingleChat */}
+                <div className="flex-grow min-h-0">
                   <SingleChat
                     chat={activeChat}
                     friend={friend}
