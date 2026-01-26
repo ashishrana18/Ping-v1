@@ -96,7 +96,7 @@ function AllChats() {
           );
         })
       ) : (
-        <p>No chats available</p>
+        <p>No chats to display</p>
       )}
     </div>
   );
