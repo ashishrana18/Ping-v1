@@ -18,6 +18,7 @@ jobs:
       run:
         working-directory: backend
             
+    ## dummy url for build time
     env:
       DATABASE_URL: "postgresql://johndoe:mypassword@localhost:5432/mydb?schema=public"
 

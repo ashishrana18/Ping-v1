@@ -5,7 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 export function slidingWindowRateLimiter({
   windowSizeInSeconds = 60,
   maxRequests = 100,
-  // choose identifier: req.user.id if logged in, otherwise req.ip
+  // choose identifier: req.user.userId if logged in, otherwise req.ip
   getId = (req) => req.user?.userId || req.ip,
 } = {}) {
   return async function rateLimiter(req, res, next) {
