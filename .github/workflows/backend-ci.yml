@@ -9,14 +9,17 @@ on:
     branches: [ main ]
     paths:
       - 'backend/**'
-
+      
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     defaults:
       run:
         working-directory: backend
+            
+    env:
+      DATABASE_URL: "postgresql://johndoe:mypassword@localhost:5432/mydb?schema=public"
 
     steps:
     - uses: actions/checkout@v4
@@ -33,13 +36,9 @@ jobs:
 
     - name: Generate Prisma Client
       run: npx prisma generate
-      env:
-        DATABASE_URL: "postgresql://johndoe:mypassword@localhost:5432/mydb?schema=public"
 
     - name: Validate Prisma Schema
       run: npx prisma validate
-      env:
-        DATABASE_URL: "postgresql://johndoe:mypassword@localhost:5432/mydb?schema=public"
 
     - name: Build
       run: npm run build
