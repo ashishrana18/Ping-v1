@@ -20,7 +20,7 @@ jobs:
             
     ## dummy url for build time
     env:
-      DATABASE_URL: "postgresql://johndoe:mypassword@localhost:5432/mydb?schema=public"
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     steps:
     - uses: actions/checkout@v4
