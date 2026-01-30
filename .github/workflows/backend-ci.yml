@@ -18,9 +18,6 @@ jobs:
       run:
         working-directory: backend
 
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
     steps:
     - uses: actions/checkout@v4
 
@@ -36,9 +33,13 @@ jobs:
 
     - name: Generate Prisma Client
       run: npx prisma generate
+      env:
+        DATABASE_URL: "postgresql://johndoe:mypassword@localhost:5432/mydb?schema=public"
 
     - name: Validate Prisma Schema
       run: npx prisma validate
+      env:
+        DATABASE_URL: "postgresql://johndoe:mypassword@localhost:5432/mydb?schema=public"
 
     - name: Build
       run: npm run build
