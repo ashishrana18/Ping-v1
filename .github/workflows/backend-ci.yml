@@ -18,9 +18,9 @@ jobs:
       run:
         working-directory: backend
             
-    ## dummy url for build time
+    # Use real secret when available; fallback for forked PRs
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://user:password@localhost:5432/mydb?schema=public' }}
 
     steps:
     - uses: actions/checkout@v4
