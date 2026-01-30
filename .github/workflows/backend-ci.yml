@@ -18,6 +18,9 @@ jobs:
       run:
         working-directory: backend
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
     - uses: actions/checkout@v4
 
