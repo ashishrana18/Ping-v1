@@ -92,9 +92,7 @@ function AllChats() {
                   height: "100%",
                 }}
               />
-              <span className="truncate text-lg font-medium">
-                {displayName}
-              </span>
+              <span className="truncate font-medium">{displayName}</span>
             </Link>
           );
         })
