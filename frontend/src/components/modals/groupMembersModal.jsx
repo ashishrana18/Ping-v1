@@ -60,13 +60,16 @@ const GroupMembersModal = ({ members, onClose }) => {
                 style={{
                   width: "44px",
                   height: "44px",
+                  fontSize: "1.2rem",
                   aspectRatio: "1/1",
                 }}
               />
-              <div className="flex items-center w-full justify-between">
-                <div className="flex flex-col text-gray-800 dark:text-gray-200 font-medium">
-                  <span>{member.username}</span>
-                  <span className="text-sm">{member.email}</span>
+              <div className="flex items-center flex-1 min-w-0 justify-between">
+                <div className="flex flex-col text-gray-800 dark:text-gray-200 font-medium min-w-0 pr-2">
+                  <span className="truncate">{member.username}</span>
+                  <span className="text-sm truncate text-gray-500 dark:text-gray-400">
+                    {member.email}
+                  </span>
                 </div>
                 <FaArrowRight
                   size={36}
