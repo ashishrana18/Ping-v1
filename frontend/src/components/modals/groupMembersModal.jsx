@@ -29,15 +29,15 @@ const GroupMembersModal = ({ members, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="relative bg-white dark:bg-gray-800 p-6 rounded shadow-lg w-full max-w-lg max-h-[80vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
+      <div className="relative bg-white dark:bg-gray-800 p-6 rounded-[2rem] shadow-lg w-full max-w-sm max-h-[80vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 p-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+          className="absolute top-4 right-4 p-2 text-gray-600 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
           title="Close"
         >
-          <FiX size={24} />
+          <FiX size={20} />
         </button>
         <h2 className="text-xl font-bold mb-4 dark:text-secondary">
           Group Members
@@ -60,13 +60,16 @@ const GroupMembersModal = ({ members, onClose }) => {
                 style={{
                   width: "44px",
                   height: "44px",
+                  fontSize: "1.2rem",
                   aspectRatio: "1/1",
                 }}
               />
-              <div className="flex items-center w-full justify-between">
-                <div className="flex flex-col text-gray-800 dark:text-gray-200 font-medium">
-                  <span>{member.username}</span>
-                  <span className="text-sm">{member.email}</span>
+              <div className="flex items-center flex-1 min-w-0 justify-between">
+                <div className="flex flex-col text-gray-800 dark:text-gray-200 font-medium min-w-0 pr-2">
+                  <span className="truncate">{member.username}</span>
+                  <span className="text-sm truncate text-gray-500 dark:text-gray-400">
+                    {member.email}
+                  </span>
                 </div>
                 <FaArrowRight
                   size={36}

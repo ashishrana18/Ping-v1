@@ -176,20 +176,27 @@ function SingleChat({ chat, friend, onUpdateChat }) {
 
   if (chat.isLocked) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-gray-100 dark:bg-[#212529] text-gray-500 dark:text-gray-400">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg flex flex-col items-center max-w-sm w-full mx-4">
-          <div className="bg-red-100 dark:bg-red-900/30 p-4 rounded-full mb-4">
-            <FiLock className="w-12 h-12 text-red-500" />
+      <div className="flex flex-col items-center justify-center h-full bg-gray-50 dark:bg-[rgb(0,17,28)] text-gray-500 dark:text-gray-400 p-4">
+        <div className="bg-white dark:bg-[rgb(0,7,28)] p-10 rounded-[2rem] shadow-2xl flex flex-col items-center max-w-sm w-full mx-auto border border-gray-100 dark:border-gray-800 relative overflow-hidden">
+          {/* Decorative background blur */}
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-red-500/10 to-transparent pointer-events-none"></div>
+
+          <div className="bg-gradient-to-tr from-red-500 to-rose-600 p-5 rounded-full mb-6 shadow-lg shadow-red-500/30 z-10">
+            <FiLock className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+
+          <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white tracking-tight z-10">
             Chat Locked
           </h2>
-          <p className="text-center mb-6">
-            This chat is locked. Enter the passcode to view and send messages.
+
+          <p className="text-center mb-8 text-gray-600 dark:text-gray-300 leading-relaxed px-4 z-10">
+            This conversation is secure. Please enter your passcode to view
+            messages.
           </p>
+
           <button
             onClick={() => setShowUnlockModal(true)}
-            className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors font-medium w-full"
+            className="w-full py-4 bg-[#2196F3] hover:bg-[#1976D2] text-white rounded-2xl font-bold text-lg shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 active:scale-[0.98] z-10"
           >
             Unlock Chat
           </button>
@@ -274,7 +281,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
                         }
                         shape="circle"
                         className="shrink-0 overflow-hidden"
-                        imageStyle={{
+                        imagestyle={{
                           objectFit: "cover",
                           width: "100%",
                           height: "100%",

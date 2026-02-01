@@ -1,26 +1,68 @@
-import React from "react";
+import { Avatar } from "primereact/avatar";
+import React, { useEffect, useState } from "react";
 import { FiX } from "react-icons/fi";
 
 const ViewAvatarModal = ({ currentAvatar, onClose, displayName }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(onClose, 300);
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="relative bg-white dark:bg-gray-800 p-6 rounded shadow-lg w-full max-w-lg">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 p-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
-          title="Close"
-        >
-          <FiX size={24} />
-        </button>
-        <h2 className="text-xl font-bold mb-4 dark:text-secondary">
-          {displayName}'s Avatar
-        </h2>
-        <img
-          src={currentAvatar}
-          alt={displayName}
-          className="w-full h-auto rounded"
-        />
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/40 transition-opacity duration-300 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+      onClick={handleClose}
+    >
+      <div
+        className={`bg-white dark:bg-[rgb(0,7,28)] w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden transition-all duration-300 transform border border-gray-100 dark:border-gray-800 ${
+          isVisible ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-6 pt-6 pb-2 flex justify-between items-center transition-colors">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white truncate pr-4">
+            {displayName ? `${displayName}'s Avatar` : "Avatar"}
+          </h2>
+          <button
+            onClick={handleClose}
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-all duration-200 shrink-0"
+            title="Close"
+          >
+            <FiX size={20} />
+          </button>
+        </div>
+
+        <div className="p-8 flex flex-col items-center pb-12">
+          <div className="relative mx-auto rounded-full p-2 bg-gradient-to-tr from-[#8b5cf6] to-[#d946ef] aspect-square shrink-0 flex items-center justify-center shadow-xl">
+            <Avatar
+              image={currentAvatar}
+              label={displayName?.[0]?.toUpperCase()}
+              className="w-64 h-64 md:w-72 md:h-72 shadow-inner shrink-0 aspect-square overflow-hidden"
+              shape="circle"
+              imagestyle={{
+                objectFit: "cover",
+                borderRadius: "100%",
+                width: "100%",
+                height: "100%",
+              }}
+              style={{
+                backgroundColor: !currentAvatar ? "#2196F3" : "transparent",
+                color: "#ffffff",
+                fontSize: "8rem",
+                fontWeight: "500",
+              }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

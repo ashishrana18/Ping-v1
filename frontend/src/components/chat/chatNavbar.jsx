@@ -101,9 +101,9 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
               backgroundColor: !profilePicture ? "#2196F3" : "transparent",
               color: "#ffffff",
               fontSize: "1.5rem",
-              fontWeight: "semibold",
+              fontWeight: "500",
             }}
-            imageStyle={{
+            imagestyle={{
               objectFit: "cover",
               width: "100%",
               height: "100%",
@@ -209,6 +209,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
             setShowChangeAvatarModal(false);
           }}
           chatId={isGroup ? currentChat.id : null}
+          displayName={displayName}
         />
       )}
 

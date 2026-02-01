@@ -75,15 +75,16 @@ function AllChats() {
                 shape="circle"
                 className="shrink-0 mr-3 overflow-hidden"
                 style={{
-                  width: "40px",
-                  height: "40px",
+                  width: "44px",
+                  height: "44px",
                   backgroundColor: !(!object.chat.isGroup
                     ? object.friend?.avatar
                     : object.chat.avatar)
                     ? "#2196F3"
                     : "transparent",
                   color: "#ffffff",
-                  fontSize: "1.2rem",
+                  fontSize: "1.5rem",
+                  fontWeight: "500",
                 }}
                 imagestyle={{
                   objectFit: "cover",
@@ -91,7 +92,7 @@ function AllChats() {
                   height: "100%",
                 }}
               />
-              <span className="truncate">{displayName}</span>
+              <span className="truncate font-medium">{displayName}</span>
             </Link>
           );
         })
