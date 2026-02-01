@@ -274,7 +274,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
                         }
                         shape="circle"
                         className="shrink-0 overflow-hidden"
-                        imageStyle={{
+                        imagestyle={{
                           objectFit: "cover",
                           width: "100%",
                           height: "100%",

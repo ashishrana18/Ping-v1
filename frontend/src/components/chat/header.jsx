@@ -161,7 +161,7 @@ function Header({ onMenuClick }) {
                     width: "44px",
                     height: "44px",
                     fontSize: "1.5rem",
-                    fontWeight: "bold",
+                    fontWeight: "500",
                   }}
                 />
               )}
@@ -233,6 +233,7 @@ function Header({ onMenuClick }) {
             if (responseData.updatedUser) setUser(responseData.updatedUser);
             setShowChangeAvatarModal(false);
           }}
+          displayName={user?.username}
         />
       )}
 
