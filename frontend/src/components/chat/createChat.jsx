@@ -123,7 +123,7 @@ function CreateChat({ currentUserId }) {
                     height: "100%",
                   }}
                   style={{
-                    backgroundColor: "#2196F3",
+                    backgroundColor: !user?.avatar ? "#2196F3" : "transparent",
                     marginRight: "12px",
                     color: "#ffffff",
                     width: "44px",

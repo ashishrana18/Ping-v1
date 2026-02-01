@@ -30,7 +30,7 @@ const ViewAvatarModal = ({ currentAvatar, onClose, displayName }) => {
         {/* Header */}
         <div className="px-6 pt-6 pb-2 flex justify-between items-center transition-colors">
           <h2 className="text-xl font-bold text-gray-800 dark:text-white truncate pr-4">
-            {displayName}'s Avatar
+            {displayName ? `${displayName}'s Avatar` : "Avatar"}
           </h2>
           <button
             onClick={handleClose}
@@ -42,7 +42,7 @@ const ViewAvatarModal = ({ currentAvatar, onClose, displayName }) => {
         </div>
 
         <div className="p-8 flex flex-col items-center pb-12">
-          <div className="relative mx-auto rounded-full p-2 bg-gradient-to-tr from-[#2196F3] to-[#64B5F6] aspect-square shrink-0 flex items-center justify-center shadow-xl">
+          <div className="relative mx-auto rounded-full p-2 bg-gradient-to-tr from-[#8b5cf6] to-[#d946ef] aspect-square shrink-0 flex items-center justify-center shadow-xl">
             <Avatar
               image={currentAvatar}
               label={displayName?.[0]?.toUpperCase()}
@@ -55,10 +55,10 @@ const ViewAvatarModal = ({ currentAvatar, onClose, displayName }) => {
                 height: "100%",
               }}
               style={{
-                backgroundColor: "#2196F3",
+                backgroundColor: !currentAvatar ? "#2196F3" : "transparent",
                 color: "#ffffff",
-                fontSize: "6rem",
-                fontWeight: "bold",
+                fontSize: "8rem",
+                fontWeight: "500",
               }}
             />
           </div>

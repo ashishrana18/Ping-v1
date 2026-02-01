@@ -15,8 +15,6 @@ const ChangeAvatarModal = ({
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  console.log("displayName", displayName);
-
   useEffect(() => {
     setIsVisible(true);
   }, []);
@@ -87,10 +85,10 @@ const ChangeAvatarModal = ({
           {/* Avatar Preview Section */}
           <div className="relative group cursor-pointer mb-8">
             <div className="absolute inset-0 rounded-full bg-[#2196F3]/10 scale-110 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative mx-auto rounded-full p-1.5 bg-gradient-to-tr from-[#2196F3] to-[#64B5F6] aspect-square shrink-0 flex items-center justify-center">
+            <div className="relative mx-auto rounded-full p-1.5 bg-gradient-to-tr from-[#8b5cf6] to-[#d946ef] aspect-square shrink-0 flex items-center justify-center">
               <Avatar
                 image={preview}
-                label={displayName?.[0].toUpperCase()}
+                label={displayName?.[0]?.toUpperCase()}
                 className="w-32 h-32 md:w-36 md:h-36 shadow-lg shrink-0 aspect-square overflow-hidden"
                 shape="circle"
                 imagestyle={{
@@ -101,9 +99,9 @@ const ChangeAvatarModal = ({
                 }}
                 style={{
                   color: "#ffffff",
-                  backgroundColor: "#2196F3",
+                  backgroundColor: !currentAvatar ? "#2196F3" : "transparent",
                   fontSize: "5rem",
-                  fontWeight: "semibold",
+                  fontWeight: "500",
                 }}
               />
               <label className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer backdrop-blur-[2px]">

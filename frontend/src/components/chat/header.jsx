@@ -156,7 +156,7 @@ function Header({ onMenuClick }) {
                     height: "100%",
                   }}
                   style={{
-                    backgroundColor: "#2196F3",
+                    backgroundColor: !user?.avatar ? "#2196F3" : "transparent",
                     color: "#ffffff",
                     width: "44px",
                     height: "44px",
@@ -238,29 +238,34 @@ function Header({ onMenuClick }) {
       )}
 
       {showChangeUsernameModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <div className="bg-white dark:bg-gray-700 p-6 rounded shadow-lg w-80">
-            <h2 className="text-lg font-semibold mb-4 dark:text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/40 transition-opacity duration-300">
+          <div className="bg-white dark:bg-[rgb(0,7,28)] w-full max-w-sm p-8 rounded-[2rem] shadow-2xl border border-gray-100 dark:border-gray-800 transform transition-all scale-100">
+            <h2 className="text-xl font-bold mb-6 dark:text-white">
               Change Username
             </h2>
-            {error && <p className="text-red-500 mb-2">{error}</p>}
+            {error && (
+              <p className="text-red-500 mb-4 bg-red-50 dark:bg-red-900/20 p-2 rounded-lg text-sm text-center font-medium">
+                {error}
+              </p>
+            )}
             <input
               type="text"
-              className="w-full px-3 py-2 mb-4 border rounded dark:bg-gray-600 dark:text-white"
+              className="w-full px-4 py-3 mb-6 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border-2 border-gray-200 dark:border-gray-700 focus:border-[#2196F3] dark:focus:border-[#2196F3] dark:text-white outline-none transition-all duration-300 placeholder-gray-400 font-medium"
               value={newUsername}
               onChange={(e) => setNewUsername(e.target.value)}
               placeholder="Enter new username"
+              autoFocus
             />
-            <div className="flex justify-end space-x-2">
+            <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowChangeUsernameModal(false)}
-                className="px-4 py-2 border rounded text-black dark:text-white bg-white dark:bg-gray-600"
+                className="px-6 py-3 rounded-xl font-bold text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdateUsername}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                className="px-6 py-3 bg-[#2196F3] hover:bg-[#1976D2] text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 active:scale-[0.98]"
               >
                 Save
               </button>
