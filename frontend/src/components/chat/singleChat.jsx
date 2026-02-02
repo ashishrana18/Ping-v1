@@ -47,6 +47,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
   }, [chat, currentUserId]);
 
   useEffect(() => {
+    setMessages([]);
     if (chat && chat.id && !chat.isLocked) {
       setLoadingMessages(true);
       api
@@ -59,7 +60,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
         .catch((err) => console.error("Error fetching messages:", err))
         .finally(() => setLoadingMessages(false));
     }
-  }, [chat]);
+  }, [chat?.id, chat?.isLocked]);
 
   useEffect(() => {
     const messageHandler = (message) => {
@@ -92,7 +93,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
 
   useEffect(() => {
     setInput(""); // Clear input whenever the chat changes
-  }, [chat]);
+  }, [chat?.id]);
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -134,7 +135,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
       socket.off("userTyping", onTyping);
       socket.off("userStopTyping", onStop);
     };
-  }, [currentUserId, chat]);
+  }, [currentUserId, chat?.id]);
 
   useEffect(() => {
     socket.on("reaction-updated", ({ messageId, emoji, user, action }) => {
