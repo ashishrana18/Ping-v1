@@ -9,6 +9,7 @@ import SecretChatPage from "./components/secretChat/SecretChatPage.jsx";
 import NoPageFound from "./components/chat/noPageFound.jsx";
 
 function App() {
+  //hello
   return (
     <BrowserRouter>
       <AuthProvider>
