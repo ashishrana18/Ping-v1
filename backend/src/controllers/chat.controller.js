@@ -1,10 +1,8 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/db.js";
 import { deleteCloudinary, uploadCloudinary } from "../utils/cloudinary.js";
-
-const prisma = new PrismaClient();
 
 const createChat = asyncHandler(async (req, res) => {
   const { chatId, isGroup, members, name } = req.body;

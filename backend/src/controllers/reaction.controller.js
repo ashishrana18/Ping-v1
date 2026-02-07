@@ -1,9 +1,8 @@
 // controllers/reaction.controller.js
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/db.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-const prisma = new PrismaClient();
 
 const createReaction = asyncHandler(async (req, res) => {
   const io = req.app.get("io");
@@ -15,7 +14,7 @@ const createReaction = asyncHandler(async (req, res) => {
   }
 
   const existing = await prisma.reaction.findUnique({
-    where: { messageId_userId: { messageId, userId } }
+    where: { messageId_userId: { messageId, userId } },
   });
 
   let reaction = null;
@@ -27,24 +26,24 @@ const createReaction = asyncHandler(async (req, res) => {
       data: {
         messageId,
         userId,
-        emoji: reactionType
+        emoji: reactionType,
       },
       include: {
-        message: { select: { chatId: true } }
-      }
+        message: { select: { chatId: true } },
+      },
     });
     action = "added";
     chatId = reaction.message.chatId;
   } else if (existing.emoji === reactionType) {
     const msg = await prisma.message.findUnique({
       where: { id: messageId },
-      select: { chatId: true }
+      select: { chatId: true },
     });
     if (!msg) throw new ApiError(404, "Message not found");
     chatId = msg.chatId;
 
     await prisma.reaction.delete({
-      where: { messageId_userId: { messageId, userId } }
+      where: { messageId_userId: { messageId, userId } },
     });
     action = "removed";
   } else {
@@ -52,8 +51,8 @@ const createReaction = asyncHandler(async (req, res) => {
       where: { messageId_userId: { messageId, userId } },
       data: { emoji: reactionType },
       include: {
-        message: { select: { chatId: true } }
-      }
+        message: { select: { chatId: true } },
+      },
     });
     action = "added";
     chatId = reaction.message.chatId;
@@ -61,14 +60,14 @@ const createReaction = asyncHandler(async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, username: true, avatar: true }
+    select: { id: true, username: true, avatar: true },
   });
 
   const payload = {
     messageId,
     emoji: action === "removed" ? null : reaction.emoji,
     user,
-    action
+    action,
   };
   io.to(chatId).emit("reaction-updated", payload);
 
@@ -78,8 +77,8 @@ const createReaction = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         { messageId, userId, emoji: payload.emoji },
-        action === "added" ? "Saved" : "Removed"
-      )
+        action === "added" ? "Saved" : "Removed",
+      ),
     );
 });
 

@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./db.js";
 import { ApiError } from "./ApiError.js";
-
-const prisma = new PrismaClient();
 
 const generateAccessAndRefreshToken = async (userId) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -15,26 +13,26 @@ const generateAccessAndRefreshToken = async (userId) => {
     {
       userId: user.id,
       username: user.username,
-      email: user.email
+      email: user.email,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY
-    }
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    },
   );
   const refreshToken = jwt.sign(
     {
-      userId: user.id
+      userId: user.id,
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRY
-    }
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+    },
   );
 
   await prisma.user.update({
     where: { id: userId },
-    data: { refreshToken: refreshToken }
+    data: { refreshToken: refreshToken },
   });
   return { accessToken, refreshToken };
 };

@@ -1,15 +1,14 @@
 // message.controller.js
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/db.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-const prisma = new PrismaClient();
 
 const createMessage = async ({ text, senderId, chatId }) => {
   console.log("Creating message:", { text, senderId, chatId });
   try {
     const savedMessage = await prisma.message.create({
-      data: { text, senderId, chatId }
+      data: { text, senderId, chatId },
     });
     return savedMessage;
   } catch (error) {
@@ -28,8 +27,8 @@ const getMessagesByChat = asyncHandler(async (req, res) => {
         sender: {
           select: {
             username: true,
-            avatar: true
-          }
+            avatar: true,
+          },
         },
         reactions: {
           select: {
@@ -38,15 +37,15 @@ const getMessagesByChat = asyncHandler(async (req, res) => {
               select: {
                 id: true,
                 username: true,
-                avatar: true
-              }
-            }
-          }
-        }
+                avatar: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
-        createdAt: "asc"
-      }
+        createdAt: "asc",
+      },
     });
 
     const formatted = messages.map((msg) => ({
@@ -57,7 +56,7 @@ const getMessagesByChat = asyncHandler(async (req, res) => {
       senderName: msg.sender.username,
       senderAvatar: msg.sender.avatar,
       sentAt: msg.createdAt,
-      reactions: msg.reactions || []
+      reactions: msg.reactions || [],
     }));
 
     return res.status(200).json(new ApiResponse(200, formatted));

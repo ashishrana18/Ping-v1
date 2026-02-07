@@ -1,15 +1,13 @@
 import bcrypt from "bcryptjs";
 import axios from "axios";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/db.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { client } from "../redis/redis.js";
 import { generateAccessAndRefreshToken } from "../utils/tokenGenerators.js";
 import { deleteCloudinary, uploadCloudinary } from "../utils/cloudinary.js";
-
-const prisma = new PrismaClient();
 
 // Register Route
 const registerUser = asyncHandler(async (req, res) => {

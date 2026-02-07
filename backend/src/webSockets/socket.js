@@ -2,9 +2,7 @@
 import { Server } from "socket.io";
 import { client } from "../redis/redis.js";
 import { createMessage } from "../controllers/message.controller.js";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../utils/db.js";
 
 export const setupSocket = (server) => {
   const io = new Server(server, {
