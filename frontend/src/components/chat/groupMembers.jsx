@@ -62,10 +62,10 @@ function GroupMembers({ chat }) {
             className="flex items-center"
             style={{ alignItems: "center" }}
           >
-            {groupMembers.slice(0, 5).map((member, i) =>
+            {groupMembers.slice(0, 5).map((member) =>
               member.avatar ? (
                 <Avatar
-                  key={i}
+                  key={member.id}
                   label={member.username[0]?.toUpperCase()}
                   image={member.avatar}
                   size="normal"
@@ -84,6 +84,7 @@ function GroupMembers({ chat }) {
                 />
               ) : (
                 <BoringAvatar
+                  key={member.id}
                   size={32}
                   name={member.username}
                   variant="beam"

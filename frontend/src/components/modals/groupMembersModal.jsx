@@ -48,7 +48,6 @@ const GroupMembersModal = ({ members, onClose }) => {
             <div key={member.id} className="flex items-center space-x-3 w-full">
               {member.avatar ? (
                 <Avatar
-                  key={member.id}
                   label={member.username[0]?.toUpperCase()}
                   image={member.avatar}
                   size="normal"
