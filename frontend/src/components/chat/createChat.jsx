@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 
 import { Avatar } from "primereact/avatar";
+import BoringAvatar from "boring-avatars";
 
 function CreateChat({ currentUserId }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -112,26 +113,42 @@ function CreateChat({ currentUserId }) {
                 onClick={() => handleDirectChatClick(user)}
                 className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors"
               >
-                <Avatar
-                  image={user?.avatar}
-                  label={user?.username?.[0]?.toUpperCase()}
-                  className="shrink-0 overflow-hidden"
-                  shape="circle"
-                  imagestyle={{
-                    objectFit: "cover",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  style={{
-                    backgroundColor: !user?.avatar ? "#2196F3" : "transparent",
-                    marginRight: "12px",
-                    color: "#ffffff",
-                    width: "44px",
-                    height: "44px",
-                    fontSize: "1.5rem",
-                    fontWeight: "bold",
-                  }}
-                />
+                {user?.avatar ? (
+                  <Avatar
+                    image={user?.avatar}
+                    label={user?.username?.[0]?.toUpperCase()}
+                    className="shrink-0 overflow-hidden"
+                    shape="circle"
+                    imagestyle={{
+                      objectFit: "cover",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                    style={{
+                      backgroundColor: "transparent",
+                      marginRight: "12px",
+                      color: "#ffffff",
+                      width: "48px",
+                      height: "48px",
+                      fontSize: "1.25rem",
+                      fontWeight: "bold",
+                    }}
+                  />
+                ) : (
+                  <BoringAvatar
+                    size={48}
+                    name={user?.username}
+                    variant="beam"
+                    colors={[
+                      "#0a0310",
+                      "#49007e",
+                      "#ff005b",
+                      "#ff7d10",
+                      "#ffb238",
+                    ]}
+                    className="shrink-0 mr-3 h-12 w-12 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800"
+                  />
+                )}
                 <div>
                   <div className="font-semibold text-gray-900 dark:text-subtext">
                     {user.username}

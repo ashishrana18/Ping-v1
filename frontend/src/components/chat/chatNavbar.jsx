@@ -7,6 +7,7 @@ import { LockChatModal } from "../modals/lockChatModal.jsx";
 import GroupMembers from "./groupMembers.jsx";
 
 import { Avatar } from "primereact/avatar";
+import BoringAvatar from "boring-avatars";
 import { Skeleton } from "primereact/skeleton";
 import {
   FiEye,
@@ -89,26 +90,36 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
     <>
       <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b bg-white text-gray-900 dark:bg-[rgb(0,7,28)] dark:text-white">
         <div className="flex items-center">
-          <Avatar
-            image={profilePicture}
-            label={displayName?.[0].toUpperCase()}
-            className={`shrink-0 overflow-hidden ${profilePicture ? "border border-gray-200 dark:border-gray-800" : ""}`}
-            shape="circle"
-            style={{
-              width: "44px",
-              height: "44px",
-              aspectRatio: "1/1",
-              backgroundColor: !profilePicture ? "#2196F3" : "transparent",
-              color: "#ffffff",
-              fontSize: "1.5rem",
-              fontWeight: "500",
-            }}
-            imagestyle={{
-              objectFit: "cover",
-              width: "100%",
-              height: "100%",
-            }}
-          />
+          {profilePicture ? (
+            <Avatar
+              image={profilePicture}
+              label={displayName?.[0].toUpperCase()}
+              className={`shrink-0 overflow-hidden ${profilePicture ? "border border-gray-200 dark:border-gray-800" : ""}`}
+              shape="circle"
+              style={{
+                width: "48px",
+                height: "48px",
+                aspectRatio: "1/1",
+                backgroundColor: "transparent",
+                color: "#ffffff",
+                fontSize: "1.25rem",
+                fontWeight: "500",
+              }}
+              imagestyle={{
+                objectFit: "cover",
+                width: "100%",
+                height: "100%",
+              }}
+            />
+          ) : (
+            <BoringAvatar
+              size={48}
+              name={displayName}
+              variant="beam"
+              colors={["#0a0310", "#49007e", "#ff005b", "#ff7d10", "#ffb238"]}
+              className="shrink-0 mr-3 h-12 w-12 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800"
+            />
+          )}
           <div className="flex flex-col ml-2">
             <h2 className="text-lg ml-[5px] font-bold">{displayName}</h2>
             {!isGroup ? (

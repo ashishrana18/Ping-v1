@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 
 import { Avatar } from "primereact/avatar";
+import BoringAvatar from "boring-avatars";
 
 export default function Message({
   message,
@@ -76,23 +77,33 @@ export default function Message({
       }`}
     >
       {/* Avatar for group messages */}
-      {!isOwnMessage && isGroup && (
-        <Avatar
-          image={message.senderAvatar}
-          label={
-            !message.senderAvatar ? message.senderName[0].toUpperCase() : null
-          }
-          shape="circle"
-          className="shrink-0 overflow-hidden [&_img]:object-cover [&_img]:w-full [&_img]:h-full"
-          style={{
-            width: "32px",
-            height: "32px",
-            backgroundColor: !message.senderAvatar ? "#2196F3" : "transparent",
-            color: "#ffffff",
-            fontSize: "1rem",
-          }}
-        />
-      )}
+      {!isOwnMessage &&
+        isGroup &&
+        (message.senderAvatar ? (
+          <Avatar
+            image={message.senderAvatar}
+            label={
+              !message.senderAvatar ? message.senderName[0].toUpperCase() : null
+            }
+            shape="circle"
+            className="shrink-0 overflow-hidden [&_img]:object-cover [&_img]:w-full [&_img]:h-full"
+            style={{
+              width: "32px",
+              height: "32px",
+              backgroundColor: "transparent",
+              color: "#ffffff",
+              fontSize: "1rem",
+            }}
+          />
+        ) : (
+          <BoringAvatar
+            size={32}
+            name={message.senderName}
+            variant="beam"
+            colors={["#0a0310", "#49007e", "#ff005b", "#ff7d10", "#ffb238"]}
+            className="shrink-0 h-8 w-8 overflow-hidden rounded-full"
+          />
+        ))}
 
       <div
         className={`relative px-3 py-2 rounded-xl max-w-[80%] w-fit

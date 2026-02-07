@@ -8,6 +8,7 @@ import { WinterTheme, SantaCap } from "../../themes/winter/winterTheme.jsx";
 import { FiPlus, FiCamera, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { Avatar } from "primereact/avatar";
+import BoringAvatar from "boring-avatars";
 import { Skeleton } from "primereact/skeleton";
 
 function Header({ onMenuClick }) {
@@ -137,14 +138,14 @@ function Header({ onMenuClick }) {
             title="Profile Menu"
           >
             {/* Avatar Section: Unified at 48px */}
-            <div className="relative shrink-0 w-[44px] h-[44px] mr-3">
+            <div className="relative shrink-0 w-[48px] h-[48px] mr-3">
               {loading ? (
                 <Skeleton
                   shape="circle"
-                  size="44px"
+                  size="48px"
                   className="absolute inset-0"
                 />
-              ) : (
+              ) : user?.avatar ? (
                 <Avatar
                   image={user?.avatar}
                   label={user?.username?.[0]?.toUpperCase()}
@@ -156,13 +157,27 @@ function Header({ onMenuClick }) {
                     height: "100%",
                   }}
                   style={{
-                    backgroundColor: !user?.avatar ? "#2196F3" : "transparent",
+                    backgroundColor: "transparent",
                     color: "#ffffff",
-                    width: "44px",
-                    height: "44px",
-                    fontSize: "1.5rem",
+                    width: "48px",
+                    height: "48px",
+                    fontSize: "1.25rem",
                     fontWeight: "500",
                   }}
+                />
+              ) : (
+                <BoringAvatar
+                  size={48}
+                  name={user?.username}
+                  variant="beam"
+                  colors={[
+                    "#0a0310",
+                    "#49007e",
+                    "#ff005b",
+                    "#ff7d10",
+                    "#ffb238",
+                  ]}
+                  className="shrink-0 h-12 w-12 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800"
                 />
               )}
             </div>
