@@ -6,6 +6,7 @@ import api from "../../services/api.js";
 import { FiX } from "react-icons/fi";
 import { FaArrowRight } from "react-icons/fa";
 import { Avatar } from "primereact/avatar";
+import BoringAvatar from "boring-avatars";
 
 const GroupMembersModal = ({ members, onClose }) => {
   const { user } = useContext(AuthContext);
@@ -45,25 +46,41 @@ const GroupMembersModal = ({ members, onClose }) => {
         <div className="space-y-3">
           {members.map((member) => (
             <div key={member.id} className="flex items-center space-x-3 w-full">
-              <Avatar
-                key={member.id}
-                label={member.username[0]?.toUpperCase()}
-                image={member.avatar}
-                size="normal"
-                shape="circle"
-                className="mr-2 shrink-0 text-lg font-medium overflow-hidden bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200"
-                imagestyle={{
-                  objectFit: "cover",
-                  width: "100%",
-                  height: "100%",
-                }}
-                style={{
-                  width: "44px",
-                  height: "44px",
-                  fontSize: "1.2rem",
-                  aspectRatio: "1/1",
-                }}
-              />
+              {member.avatar ? (
+                <Avatar
+                  key={member.id}
+                  label={member.username[0]?.toUpperCase()}
+                  image={member.avatar}
+                  size="normal"
+                  shape="circle"
+                  className="mr-2 shrink-0 text-lg font-medium overflow-hidden bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200"
+                  imagestyle={{
+                    objectFit: "cover",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  style={{
+                    width: "48px",
+                    height: "48px",
+                    fontSize: "1.25rem",
+                    aspectRatio: "1/1",
+                  }}
+                />
+              ) : (
+                <BoringAvatar
+                  size={48}
+                  name={member.username}
+                  variant="beam"
+                  colors={[
+                    "#0a0310",
+                    "#49007e",
+                    "#ff005b",
+                    "#ff7d10",
+                    "#ffb238",
+                  ]}
+                  className="shrink-0 mr-2 h-12 w-12 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800"
+                />
+              )}
               <div className="flex items-center flex-1 min-w-0 justify-between">
                 <div className="flex flex-col text-gray-800 dark:text-gray-200 font-medium min-w-0 pr-2">
                   <span className="truncate">{member.username}</span>

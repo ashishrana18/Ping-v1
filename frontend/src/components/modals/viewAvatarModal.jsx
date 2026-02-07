@@ -1,5 +1,7 @@
-import { Avatar } from "primereact/avatar";
 import React, { useEffect, useState } from "react";
+
+import { Avatar } from "primereact/avatar";
+import BoringAvatar from "boring-avatars";
 import { FiX } from "react-icons/fi";
 
 const ViewAvatarModal = ({ currentAvatar, onClose, displayName }) => {
@@ -43,24 +45,34 @@ const ViewAvatarModal = ({ currentAvatar, onClose, displayName }) => {
 
         <div className="p-8 flex flex-col items-center pb-12">
           <div className="relative mx-auto rounded-full p-2 bg-gradient-to-tr from-[#8b5cf6] to-[#d946ef] aspect-square shrink-0 flex items-center justify-center shadow-xl">
-            <Avatar
-              image={currentAvatar}
-              label={displayName?.[0]?.toUpperCase()}
-              className="w-64 h-64 md:w-72 md:h-72 shadow-inner shrink-0 aspect-square overflow-hidden"
-              shape="circle"
-              imagestyle={{
-                objectFit: "cover",
-                borderRadius: "100%",
-                width: "100%",
-                height: "100%",
-              }}
-              style={{
-                backgroundColor: !currentAvatar ? "#2196F3" : "transparent",
-                color: "#ffffff",
-                fontSize: "8rem",
-                fontWeight: "500",
-              }}
-            />
+            {currentAvatar ? (
+              <Avatar
+                image={currentAvatar}
+                label={displayName?.[0]?.toUpperCase()}
+                className="w-64 h-64 md:w-72 md:h-72 shadow-inner shrink-0 aspect-square overflow-hidden"
+                shape="circle"
+                imagestyle={{
+                  objectFit: "cover",
+                  borderRadius: "100%",
+                  width: "100%",
+                  height: "100%",
+                }}
+                style={{
+                  backgroundColor: "transparent",
+                  color: "#ffffff",
+                  fontSize: "8rem",
+                  fontWeight: "500",
+                }}
+              />
+            ) : (
+              <BoringAvatar
+                size={288}
+                name={displayName}
+                variant="beam"
+                colors={["#0a0310", "#49007e", "#ff005b", "#ff7d10", "#ffb238"]}
+                className="shrink-0 w-64 h-64 md:w-72 md:h-72 overflow-hidden rounded-full shadow-inner"
+              />
+            )}
           </div>
         </div>
       </div>

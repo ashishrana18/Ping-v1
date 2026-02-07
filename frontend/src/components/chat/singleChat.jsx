@@ -9,6 +9,7 @@ import { LockChatModal } from "../modals/lockChatModal.jsx";
 
 import { FiLock } from "react-icons/fi";
 import { Avatar } from "primereact/avatar";
+import BoringAvatar from "boring-avatars";
 import { Skeleton } from "primereact/skeleton";
 
 function SingleChat({ chat, friend, onUpdateChat }) {
@@ -272,29 +273,43 @@ function SingleChat({ chat, friend, onUpdateChat }) {
                       key={i}
                       className="flex items-center gap-3 p-2 hover:bg-gray-800 rounded-md"
                     >
-                      <Avatar
-                        image={r.user.avatar}
-                        label={
-                          !r.user.avatar
-                            ? r.user.username[0].toUpperCase()
-                            : null
-                        }
-                        shape="circle"
-                        className="shrink-0 overflow-hidden"
-                        imagestyle={{
-                          objectFit: "cover",
-                          width: "100%",
-                          height: "100%",
-                        }}
-                        style={{
-                          width: "32px",
-                          height: "32px",
-                          backgroundColor: !r.user.avatar
-                            ? "#2196F3"
-                            : "transparent",
-                          color: "#ffffff",
-                        }}
-                      />
+                      {r.user.avatar ? (
+                        <Avatar
+                          image={r.user.avatar}
+                          label={
+                            !r.user.avatar
+                              ? r.user.username[0].toUpperCase()
+                              : null
+                          }
+                          shape="circle"
+                          className="shrink-0 overflow-hidden"
+                          imagestyle={{
+                            objectFit: "cover",
+                            width: "100%",
+                            height: "100%",
+                          }}
+                          style={{
+                            width: "32px",
+                            height: "32px",
+                            backgroundColor: "transparent",
+                            color: "#ffffff",
+                          }}
+                        />
+                      ) : (
+                        <BoringAvatar
+                          size={32}
+                          name={r.user.username}
+                          variant="beam"
+                          colors={[
+                            "#0a0310",
+                            "#49007e",
+                            "#ff005b",
+                            "#ff7d10",
+                            "#ffb238",
+                          ]}
+                          className="shrink-0 h-8 w-8 overflow-hidden rounded-full"
+                        />
+                      )}
                       <span className="font-medium text-white">
                         {r.user.username}
                       </span>

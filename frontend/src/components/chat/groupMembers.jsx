@@ -5,6 +5,7 @@ import { GroupMembersModal } from "../modals/groupMembersModal.jsx";
 import { AvatarGroup } from "primereact/avatargroup";
 import { Skeleton } from "primereact/skeleton";
 import { Avatar } from "primereact/avatar";
+import BoringAvatar from "boring-avatars";
 import { MdKeyboardArrowRight } from "react-icons/md";
 
 function GroupMembers({ chat }) {
@@ -49,7 +50,7 @@ function GroupMembers({ chat }) {
               width="32px"
               shape="circle"
               style={{
-                fontSize: "1rem",
+                fontSize: "0.875rem",
                 fontWeight: "bold",
               }}
             />
@@ -61,26 +62,42 @@ function GroupMembers({ chat }) {
             className="flex items-center"
             style={{ alignItems: "center" }}
           >
-            {groupMembers.slice(0, 5).map((member, i) => (
-              <Avatar
-                key={i}
-                label={member.username[0]?.toUpperCase()}
-                image={member.avatar}
-                size="normal"
-                shape="circle"
-                className={`mr-2 shrink-0 overflow-hidden text-md bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200 ${member.avatar ? "border border-gray-200 dark:border-gray-800" : ""}`}
-                imagestyle={{
-                  objectFit: "cover",
-                  width: "100%",
-                  height: "100%",
-                }}
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  aspectRatio: "1/1",
-                }}
-              />
-            ))}
+            {groupMembers.slice(0, 5).map((member, i) =>
+              member.avatar ? (
+                <Avatar
+                  key={i}
+                  label={member.username[0]?.toUpperCase()}
+                  image={member.avatar}
+                  size="normal"
+                  shape="circle"
+                  className={`mr-2 shrink-0 overflow-hidden text-md bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200 ${member.avatar ? "border border-gray-200 dark:border-gray-800" : ""}`}
+                  imagestyle={{
+                    objectFit: "cover",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    aspectRatio: "1/1",
+                  }}
+                />
+              ) : (
+                <BoringAvatar
+                  size={32}
+                  name={member.username}
+                  variant="beam"
+                  colors={[
+                    "#0a0310",
+                    "#49007e",
+                    "#ff005b",
+                    "#ff7d10",
+                    "#ffb238",
+                  ]}
+                  className="p-avatar mr-2 p-avatar-circle shrink-0 h-[30px] w-[30px] overflow-hidden rounded-full border border-gray-200 dark:border-gray-800"
+                />
+              ),
+            )}
 
             {groupMembers.length > 5 ? (
               <Avatar
@@ -90,8 +107,8 @@ function GroupMembers({ chat }) {
                 shape="circle"
                 className="font-medium bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200"
                 style={{
-                  width: "30px",
-                  height: "30px",
+                  width: "32px",
+                  height: "32px",
                   aspectRatio: "1/1",
                   cursor: "pointer",
                   verticalAlign: "middle",
