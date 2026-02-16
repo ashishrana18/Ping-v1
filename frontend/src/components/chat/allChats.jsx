@@ -45,7 +45,7 @@ function AllChats() {
       </div>
       <div className="flex-grow overflow-y-auto px-2 py-2 space-y-1">
         {loading ? (
-          <div className="flex flex-col space-y-2 px-2">
+          <div className="flex flex-col space-y-1">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}

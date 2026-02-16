@@ -94,7 +94,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
             <Avatar
               image={profilePicture}
               label={displayName?.[0].toUpperCase()}
-              className={`shrink-0 overflow-hidden ${profilePicture ? "border border-gray-200 dark:border-gray-800" : ""}`}
+              className={`shrink-0 mr-1 overflow-hidden ${profilePicture ? "border border-gray-200 dark:border-gray-800" : ""}`}
               shape="circle"
               style={{
                 width: "48px",
@@ -117,7 +117,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
               name={displayName}
               variant="beam"
               colors={["#0a0310", "#49007e", "#ff005b", "#ff7d10", "#ffb238"]}
-              className="shrink-0 mr-3 h-12 w-12 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800"
+              className="shrink-0 mr-1 h-12 w-12 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800"
             />
           )}
           <div className="flex flex-col ml-2">
