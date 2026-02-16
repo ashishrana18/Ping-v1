@@ -4,7 +4,7 @@ import RegisterPage from "./pages/registerPage.jsx";
 import ChatPage from "./pages/chatPage.jsx";
 import { AuthProvider } from "./services/authContext.jsx";
 import NewChatPage from "./pages/newChatPage.jsx";
-import Heartbeat from "./components/chat/heartBeat.jsx";
+import Heartbeat from "./components/utils/heartBeat.jsx";
 import SecretChatPage from "./components/secretChat/SecretChatPage.jsx";
 import NoPageFound from "./components/chat/noPageFound.jsx";
 

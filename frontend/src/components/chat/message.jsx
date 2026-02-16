@@ -1,10 +1,9 @@
 import React from "react";
-import Picker from "emoji-picker-react";
 import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
+import AvatarComponent from "../utils/avatar.jsx";
 
-import { Avatar } from "primereact/avatar";
-import BoringAvatar from "boring-avatars";
+import Picker from "emoji-picker-react";
 
 export default function Message({
   message,
@@ -77,33 +76,15 @@ export default function Message({
       }`}
     >
       {/* Avatar for group messages */}
-      {!isOwnMessage &&
-        isGroup &&
-        (message.senderAvatar ? (
-          <Avatar
-            image={message.senderAvatar}
-            label={
-              !message.senderAvatar ? message.senderName[0].toUpperCase() : null
-            }
-            shape="circle"
-            className="shrink-0 overflow-hidden [&_img]:object-cover [&_img]:w-full [&_img]:h-full"
-            style={{
-              width: "32px",
-              height: "32px",
-              backgroundColor: "transparent",
-              color: "#ffffff",
-              fontSize: "1rem",
-            }}
-          />
-        ) : (
-          <BoringAvatar
-            size={32}
-            name={message.senderName}
-            variant="beam"
-            colors={["#0a0310", "#49007e", "#ff005b", "#ff7d10", "#ffb238"]}
-            className="shrink-0 h-8 w-8 overflow-hidden rounded-full"
-          />
-        ))}
+      {!isOwnMessage && isGroup && (
+        <AvatarComponent
+          profilePicture={message.senderAvatar}
+          displayName={message.senderName}
+          size={32}
+          avatarClasses="shrink-0 overflow-hidden [&_img]:object-cover [&_img]:w-full [&_img]:h-full"
+          boringAvatarClasses="shrink-0 overflow-hidden rounded-full"
+        />
+      )}
 
       <div
         className={`relative px-3 py-2 rounded-xl max-w-[80%] w-fit

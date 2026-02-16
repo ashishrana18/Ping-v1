@@ -3,8 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 
-import { Avatar } from "primereact/avatar";
-import BoringAvatar from "boring-avatars";
+import AvatarComponent from "../utils/avatar.jsx";
 
 function CreateChat({ currentUserId }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,6 +40,10 @@ function CreateChat({ currentUserId }) {
     if (!groupMembers.some((member) => member.id === user.id)) {
       setGroupMembers([...groupMembers, user]);
     }
+  };
+
+  const removeGroupMember = (user) => {
+    setGroupMembers(groupMembers.filter((member) => member.id !== user.id));
   };
 
   // Handle click on a direct chat result
@@ -111,44 +114,15 @@ function CreateChat({ currentUserId }) {
               <div
                 key={user.id}
                 onClick={() => handleDirectChatClick(user)}
-                className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-600 transition-colors"
+                className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 hover:rounded-md dark:hover:bg-gray-600 transition-colors"
               >
-                {user?.avatar ? (
-                  <Avatar
-                    image={user?.avatar}
-                    label={user?.username?.[0]?.toUpperCase()}
-                    className="shrink-0 overflow-hidden"
-                    shape="circle"
-                    imagestyle={{
-                      objectFit: "cover",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                    style={{
-                      backgroundColor: "transparent",
-                      marginRight: "12px",
-                      color: "#ffffff",
-                      width: "48px",
-                      height: "48px",
-                      fontSize: "1.25rem",
-                      fontWeight: "bold",
-                    }}
-                  />
-                ) : (
-                  <BoringAvatar
-                    size={48}
-                    name={user?.username}
-                    variant="beam"
-                    colors={[
-                      "#0a0310",
-                      "#49007e",
-                      "#ff005b",
-                      "#ff7d10",
-                      "#ffb238",
-                    ]}
-                    className="shrink-0 mr-3 h-12 w-12 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800"
-                  />
-                )}
+                <AvatarComponent
+                  profilePicture={user.avatar}
+                  displayName={user.username}
+                  size="48px"
+                  avatarClasses="shrink-0 mr-1 overflow-hidden"
+                  boringAvatarClasses="shrink-0 mr-1 overflow-hidden rounded-full"
+                />
                 <div>
                   <div className="font-semibold text-gray-900 dark:text-subtext">
                     {user.username}
@@ -173,8 +147,15 @@ function CreateChat({ currentUserId }) {
               <div
                 key={group.id}
                 onClick={() => handleGroupChatClick(group)}
-                className="p-2 border-b cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-700 dark:text-subtext"
+                className="flex items-center p-1 cursor-pointer hover:bg-blue-100 hover:rounded-md dark:hover:bg-gray-700 dark:text-subtext"
               >
+                <AvatarComponent
+                  profilePicture={group.avatar}
+                  displayName={group.name}
+                  size="48px"
+                  avatarClasses="shrink-0 mr-1 overflow-hidden"
+                  boringAvatarClasses="shrink-0 mr-1 overflow-hidden rounded-full"
+                />
                 {group.name}
               </div>
             ))
@@ -187,9 +168,23 @@ function CreateChat({ currentUserId }) {
               <div
                 key={user.id}
                 onClick={() => addGroupMember(user)}
-                className="p-2 border-b cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-subtext"
+                className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 hover:rounded-md dark:hover:bg-gray-600 transition-colors"
               >
-                {user.username} ({user.email})
+                <AvatarComponent
+                  profilePicture={user.avatar}
+                  displayName={user.username}
+                  size="48px"
+                  avatarClasses="shrink-0 mr-1 overflow-hidden rounded-full"
+                  boringAvatarClasses="shrink-0 mr-1 overflow-hidden rounded-full"
+                />
+                <div>
+                  <div className="font-semibold text-gray-900 dark:text-subtext">
+                    {user.username}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-subtext">
+                    {user.email}
+                  </div>
+                </div>
               </div>
             ))
           ) : (
@@ -200,14 +195,34 @@ function CreateChat({ currentUserId }) {
               <h4 className="font-semibold">Selected Members:</h4>
               <ul>
                 {groupMembers.map((member) => (
-                  <li key={member.id}>{member.username}</li>
+                  <div
+                    key={member.id}
+                    onClick={() => removeGroupMember(member)}
+                    className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 hover:rounded-md dark:hover:bg-gray-600 transition-colors"
+                  >
+                    <AvatarComponent
+                      profilePicture={member.avatar}
+                      displayName={member.username}
+                      size="48px"
+                      avatarClasses="shrink-0 mr-1 overflow-hidden rounded-full"
+                      boringAvatarClasses="shrink-0 mr-1 overflow-hidden rounded-full"
+                    />
+                    <div>
+                      <div className="font-semibold text-gray-900 dark:text-subtext">
+                        {member.username}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-subtext">
+                        {member.email}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </ul>
             </div>
           )}
           <button
             onClick={handleCreateGroupChat}
-            className="mt-4 p-2 border rounded bg-blue-500 text-white"
+            className="mt-4 p-2 border rounded-md bg-blue-500 text-white"
           >
             Create Group Chat
           </button>
@@ -216,7 +231,7 @@ function CreateChat({ currentUserId }) {
 
       <button
         onClick={handleToggle}
-        className="mt-2 p-2 border rounded bg-gray-200 dark:bg-slate-950"
+        className="mt-2 p-2 border rounded-md bg-gray-200 dark:bg-slate-950"
       >
         Switch to {chatType === "direct" ? "Group Chat" : "Direct Chat"}
       </button>

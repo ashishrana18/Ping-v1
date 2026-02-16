@@ -6,3 +6,7 @@
   @apply bg-slate-200 dark:bg-[#2e3a4a] !important;
   opacity: 0.9;
 }
+
+body {
+  background-color: #0d0d0d;
+}
