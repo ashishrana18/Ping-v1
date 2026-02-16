@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api.js";
-import { Avatar } from "primereact/avatar";
-import BoringAvatar from "boring-avatars";
+import AvatarComponent from "../utils/avatar.jsx";
 import { FiX, FiCamera, FiCheck, FiUpload } from "react-icons/fi";
 
 const ChangeAvatarModal = ({
@@ -87,40 +86,13 @@ const ChangeAvatarModal = ({
           <div className="relative group cursor-pointer mb-8">
             <div className="absolute inset-0 rounded-full bg-[#2196F3]/10 scale-110 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative mx-auto rounded-full p-1.5 bg-gradient-to-tr from-[#8b5cf6] to-[#d946ef] aspect-square shrink-0 flex items-center justify-center">
-              {preview ? (
-                <Avatar
-                  image={preview}
-                  label={displayName?.[0]?.toUpperCase()}
-                  className="w-32 h-32 md:w-36 md:h-36 shadow-lg shrink-0 aspect-square overflow-hidden"
-                  shape="circle"
-                  imagestyle={{
-                    objectFit: "cover",
-                    borderRadius: "100%",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  style={{
-                    color: "#ffffff",
-                    backgroundColor: "transparent",
-                    fontSize: "5rem",
-                    fontWeight: "500",
-                  }}
-                />
-              ) : (
-                <BoringAvatar
-                  size={144}
-                  name={displayName}
-                  variant="beam"
-                  colors={[
-                    "#0a0310",
-                    "#49007e",
-                    "#ff005b",
-                    "#ff7d10",
-                    "#ffb238",
-                  ]}
-                  className="shrink-0 w-32 h-32 md:w-36 md:h-36 overflow-hidden rounded-full shadow-lg"
-                />
-              )}
+              <AvatarComponent
+                profilePicture={preview}
+                displayName={displayName}
+                size={128}
+                avatarClasses="shadow-lg shrink-0 aspect-square overflow-hidden"
+                boringAvatarClasses="shrink-0 overflow-hidden rounded-full shadow-lg"
+              />
               <label className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer backdrop-blur-[2px]">
                 <FiCamera
                   size={24}

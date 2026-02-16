@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import api from "../../services/api.js";
 import { GroupMembersModal } from "../modals/groupMembersModal.jsx";
 
-import { AvatarGroup } from "primereact/avatargroup";
 import { Skeleton } from "primereact/skeleton";
-import { Avatar } from "primereact/avatar";
-import BoringAvatar from "boring-avatars";
 import { MdKeyboardArrowRight } from "react-icons/md";
+import AvatarComponent from "../utils/avatar.jsx";
+
+import { Avatar } from "primereact/avatar";
+import { AvatarGroup } from "primereact/avatargroup";
 
 function GroupMembers({ chat }) {
   const [groupMembers, setGroupMembers] = useState([]);
@@ -62,44 +63,19 @@ function GroupMembers({ chat }) {
             className="flex items-center"
             style={{ alignItems: "center" }}
           >
-            {groupMembers.slice(0, 5).map((member) =>
-              member.avatar ? (
-                <Avatar
-                  key={member.id}
-                  label={member.username[0]?.toUpperCase()}
-                  image={member.avatar}
-                  size="normal"
-                  shape="circle"
-                  className={`mr-2 shrink-0 overflow-hidden text-md bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200 ${member.avatar ? "border border-gray-200 dark:border-gray-800" : ""}`}
-                  imagestyle={{
-                    objectFit: "cover",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  style={{
-                    width: "32px",
-                    height: "32px",
-                    aspectRatio: "1/1",
-                  }}
-                />
-              ) : (
-                <BoringAvatar
-                  key={member.id}
-                  size={32}
-                  name={member.username}
-                  variant="beam"
-                  colors={[
-                    "#0a0310",
-                    "#49007e",
-                    "#ff005b",
-                    "#ff7d10",
-                    "#ffb238",
-                  ]}
-                  className="p-avatar mr-2 p-avatar-circle shrink-0 h-[30px] w-[30px] overflow-hidden rounded-full border border-gray-200 dark:border-gray-800"
-                />
-              ),
-            )}
-
+            {groupMembers.slice(0, 5).map((member) => (
+              <AvatarComponent
+                profilePicture={member.avatar}
+                displayName={member.username}
+                size={32}
+                avatarClasses={
+                  "mr-2 shrink-0 overflow-hidden text-md bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-200"
+                }
+                boringAvatarClasses={
+                  "p-avatar mr-2 p-avatar-circle shrink-0 h-[30px] w-[30px] overflow-hidden rounded-full"
+                }
+              />
+            ))}
             {groupMembers.length > 5 ? (
               <Avatar
                 onClick={handleOpenMembers}

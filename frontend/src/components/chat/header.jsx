@@ -7,8 +7,7 @@ import { WinterTheme, SantaCap } from "../../themes/winter/winterTheme.jsx";
 
 import { FiPlus, FiCamera, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
-import { Avatar } from "primereact/avatar";
-import BoringAvatar from "boring-avatars";
+import AvatarComponent from "../utils/avatar.jsx";
 import { Skeleton } from "primereact/skeleton";
 
 function Header({ onMenuClick }) {
@@ -106,21 +105,21 @@ function Header({ onMenuClick }) {
 
   return (
     <>
-      <header className="sticky top-0 z-20 p-4 border-b bg-white dark:bg-gray-900 dark:text-primary flex justify-between items-center relative">
+      <header className="sticky top-0 z-50 p-4 border-b bg-white dark:bg-gray-900 dark:text-primary flex justify-between items-center relative">
         {/* Temporary Winter Theme - Remove after winter season */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <WinterTheme />
         </div>
         {onMenuClick && (
           <button
-            className="md:hidden p-2 mr-2 relative z-2"
+            className="md:hidden p-2 mr-2 relative z-50"
             onClick={onMenuClick}
             aria-label="Toggle sidebar"
           >
             <FiMenu className="h-6 w-6 text-gray-700 dark:text-gray-200" />
           </button>
         )}
-        <div className="flex items-center space-x-4 relative z-10">
+        <div className="flex items-center space-x-4 relative z-50">
           <button
             onClick={() => navigate("/chat", { state: {} })}
             className="text-2xl font-bold relative"
@@ -130,7 +129,7 @@ function Header({ onMenuClick }) {
             <SantaCap />
           </button>
         </div>
-        <div className="relative z-10" ref={menuRef}>
+        <div className="relative z-50" ref={menuRef}>
           {/* Profile section: current user's avatar and username */}
           <button
             onClick={() => setMenuOpen((prev) => !prev)}
@@ -145,39 +144,13 @@ function Header({ onMenuClick }) {
                   size="48px"
                   className="absolute inset-0"
                 />
-              ) : user?.avatar ? (
-                <Avatar
-                  image={user?.avatar}
-                  label={user?.username?.[0]?.toUpperCase()}
-                  className={`shrink-0 overflow-hidden ${user?.avatar ? "border border-gray-200 dark:border-gray-800" : ""}`}
-                  shape="circle"
-                  imagestyle={{
-                    objectFit: "cover",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "#ffffff",
-                    width: "48px",
-                    height: "48px",
-                    fontSize: "1.25rem",
-                    fontWeight: "500",
-                  }}
-                />
               ) : (
-                <BoringAvatar
-                  size={48}
-                  name={user?.username}
-                  variant="beam"
-                  colors={[
-                    "#0a0310",
-                    "#49007e",
-                    "#ff005b",
-                    "#ff7d10",
-                    "#ffb238",
-                  ]}
-                  className="shrink-0 h-12 w-12 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800"
+                <AvatarComponent
+                  profilePicture={user?.avatar}
+                  displayName={user?.username}
+                  size="48px"
+                  avatarClasses="shrink-0 overflow-hidden"
+                  boringAvatarClasses="shrink-0 overflow-hidden rounded-full"
                 />
               )}
             </div>
@@ -194,7 +167,7 @@ function Header({ onMenuClick }) {
             </div>
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-[100]">
+            <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50">
               <button
                 onClick={handleCreateChat}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"

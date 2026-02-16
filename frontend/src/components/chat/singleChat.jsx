@@ -8,8 +8,7 @@ import { ApiError } from "../../../../backend/src/utils/ApiError.js";
 import { LockChatModal } from "../modals/lockChatModal.jsx";
 
 import { FiLock } from "react-icons/fi";
-import { Avatar } from "primereact/avatar";
-import BoringAvatar from "boring-avatars";
+import AvatarComponent from "../utils/avatar.jsx";
 import { Skeleton } from "primereact/skeleton";
 
 function SingleChat({ chat, friend, onUpdateChat }) {
@@ -261,7 +260,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
         )}
         <div ref={messagesEndRef} />
         {reactionsPopup && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
             <div className="bg-white dark:bg-gray-800 dark:text-white p-6 rounded-lg max-w-sm w-full">
               <h3 className="text-lg font-semibold mb-4">Reactions</h3>
               <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -271,46 +270,16 @@ function SingleChat({ chat, friend, onUpdateChat }) {
                   ?.reactions.map((r, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-3 p-2 hover:bg-gray-800 rounded-md"
+                      className="flex items-center gap-3 p-2 hover:bg-gray-200 dark:hover:bg-green-700 rounded-md"
                     >
-                      {r.user.avatar ? (
-                        <Avatar
-                          image={r.user.avatar}
-                          label={
-                            !r.user.avatar
-                              ? r.user.username[0].toUpperCase()
-                              : null
-                          }
-                          shape="circle"
-                          className="shrink-0 overflow-hidden"
-                          imagestyle={{
-                            objectFit: "cover",
-                            width: "100%",
-                            height: "100%",
-                          }}
-                          style={{
-                            width: "32px",
-                            height: "32px",
-                            backgroundColor: "transparent",
-                            color: "#ffffff",
-                          }}
-                        />
-                      ) : (
-                        <BoringAvatar
-                          size={32}
-                          name={r.user.username}
-                          variant="beam"
-                          colors={[
-                            "#0a0310",
-                            "#49007e",
-                            "#ff005b",
-                            "#ff7d10",
-                            "#ffb238",
-                          ]}
-                          className="shrink-0 h-8 w-8 overflow-hidden rounded-full"
-                        />
-                      )}
-                      <span className="font-medium text-white">
+                      <AvatarComponent
+                        profilePicture={r.user.avatar}
+                        displayName={r.user.username}
+                        size={32}
+                        avatarClasses="shrink-0 overflow-hidden"
+                        boringAvatarClasses="shrink-0 overflow-hidden rounded-full"
+                      />
+                      <span className="font-medium text-gray-700 dark:text-white">
                         {r.user.username}
                       </span>
                       <span className="text-2xl ml-auto">{r.emoji}</span>

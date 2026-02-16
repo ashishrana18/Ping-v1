@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import api from "../../services/api.js";
 
-import { Avatar } from "primereact/avatar";
-import BoringAvatar from "boring-avatars";
+import AvatarComponent from "../utils/avatar.jsx";
 import { Skeleton } from "primereact/skeleton";
 
 function AllChats() {
@@ -93,41 +92,13 @@ function AllChats() {
                   <div className="absolute left-0 w-1 h-8 bg-blue-500 rounded-r-full" />
                 )}
 
-                {avatar ? (
-                  <Avatar
-                    image={avatar}
-                    label={displayName[0].toUpperCase()}
-                    className="shrink-0 mr-3 shadow-sm border border-gray-100 dark:border-gray-800/50"
-                    shape="circle"
-                    style={{
-                      width: "48px",
-                      height: "48px",
-                      backgroundColor: "transparent",
-                      color: "#ffffff",
-                      fontSize: "1.25rem",
-                      fontWeight: "600",
-                    }}
-                    imagestyle={{
-                      objectFit: "cover",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                ) : (
-                  <BoringAvatar
-                    size={48}
-                    name={displayName}
-                    variant="beam"
-                    colors={[
-                      "#0a0310",
-                      "#49007e",
-                      "#ff005b",
-                      "#ff7d10",
-                      "#ffb238",
-                    ]}
-                    className="shrink-0 mr-3 h-12 w-12 overflow-hidden rounded-full shadow-sm"
-                  />
-                )}
+                <AvatarComponent
+                  profilePicture={avatar}
+                  displayName={displayName}
+                  size="48px"
+                  avatarClasses="shrink-0 mr-3 shadow-sm"
+                  boringAvatarClasses="shrink-0 mr-3 overflow-hidden rounded-full shadow-sm"
+                />
                 <div className="flex flex-col min-w-0">
                   <span
                     className={`truncate font-bold text-base transition-colors duration-200
