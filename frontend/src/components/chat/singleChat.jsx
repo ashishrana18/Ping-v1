@@ -260,7 +260,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
         )}
         <div ref={messagesEndRef} />
         {reactionsPopup && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 dark:text-white p-6 rounded-lg max-w-sm w-full">
               <h3 className="text-lg font-semibold mb-4">Reactions</h3>
               <div className="space-y-2 max-h-60 overflow-y-auto">

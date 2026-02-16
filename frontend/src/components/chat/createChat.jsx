@@ -42,6 +42,10 @@ function CreateChat({ currentUserId }) {
     }
   };
 
+  const removeGroupMember = (user) => {
+    setGroupMembers(groupMembers.filter((member) => member.id !== user.id));
+  };
+
   // Handle click on a direct chat result
   const handleDirectChatClick = async (friend) => {
     const newChatId = [currentUserId, friend.id].sort().join("");
@@ -116,8 +120,8 @@ function CreateChat({ currentUserId }) {
                   profilePicture={user.avatar}
                   displayName={user.username}
                   size="48px"
-                  avatarClasses="shrink-0 mr-1 overflow-hidden border border-gray-100 dark:border-gray-800/50"
-                  boringAvatarClasses="shrink-0 mr-1 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800/50"
+                  avatarClasses="shrink-0 mr-1 overflow-hidden"
+                  boringAvatarClasses="shrink-0 mr-1 overflow-hidden rounded-full"
                 />
                 <div>
                   <div className="font-semibold text-gray-900 dark:text-subtext">
@@ -145,15 +149,13 @@ function CreateChat({ currentUserId }) {
                 onClick={() => handleGroupChatClick(group)}
                 className="flex items-center p-1 cursor-pointer hover:bg-blue-100 hover:rounded-md dark:hover:bg-gray-700 dark:text-subtext"
               >
-                <div className="flex items-center p-1 cursor-pointer hover:bg-blue-100 hover:rounded-md dark:hover:bg-gray-700 dark:text-subtext">
-                  <AvatarComponent
-                    profilePicture={group.avatar}
-                    displayName={group.name}
-                    size="48px"
-                    avatarClasses="shrink-0 mr-1 overflow-hidden border border-gray-100 dark:border-gray-800/50"
-                    boringAvatarClasses="shrink-0 mr-1 overflow-hidden rounded-full border border-gray-100 dark:border-gray-800/50"
-                  />
-                </div>
+                <AvatarComponent
+                  profilePicture={group.avatar}
+                  displayName={group.name}
+                  size="48px"
+                  avatarClasses="shrink-0 mr-1 overflow-hidden"
+                  boringAvatarClasses="shrink-0 mr-1 overflow-hidden rounded-full"
+                />
                 {group.name}
               </div>
             ))
@@ -195,7 +197,7 @@ function CreateChat({ currentUserId }) {
                 {groupMembers.map((member) => (
                   <div
                     key={member.id}
-                    onClick={() => addGroupMember(member)}
+                    onClick={() => removeGroupMember(member)}
                     className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 hover:rounded-md dark:hover:bg-gray-600 transition-colors"
                   >
                     <AvatarComponent

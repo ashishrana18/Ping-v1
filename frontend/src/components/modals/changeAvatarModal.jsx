@@ -89,7 +89,7 @@ const ChangeAvatarModal = ({
               <AvatarComponent
                 profilePicture={preview}
                 displayName={displayName}
-                size={128}
+                size={144}
                 avatarClasses="shadow-lg shrink-0 aspect-square overflow-hidden"
                 boringAvatarClasses="shrink-0 overflow-hidden rounded-full shadow-lg"
               />
