@@ -9,6 +9,7 @@ import { FiPlus, FiCamera, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import AvatarComponent from "../utils/avatar.jsx";
 import { Skeleton } from "primereact/skeleton";
+import { useWebHaptics } from "web-haptics/react";
 
 function Header({ onMenuClick }) {
   const { user, setUser, loading } = useContext(AuthContext);
@@ -103,6 +104,13 @@ function Header({ onMenuClick }) {
 
   const profilePicture = user && user.avatar ? user.avatar : null;
 
+  const { trigger } = useWebHaptics({
+    options: {
+      enableVibrations: true,
+      enableAudio: true,
+    },
+  });
+
   return (
     <>
       <header className="sticky top-0 z-50 p-4 border-b bg-white dark:bg-gray-900 dark:text-primary flex justify-between items-center relative">
@@ -112,8 +120,11 @@ function Header({ onMenuClick }) {
         </div>
         {onMenuClick && (
           <button
+            onClick={() => {
+              onMenuClick();
+              trigger([{ duration: 10 }], { intensity: 1 });
+            }}
             className="md:hidden p-2 mr-2 relative z-50"
-            onClick={onMenuClick}
             aria-label="Toggle sidebar"
           >
             <FiMenu className="h-6 w-6 text-gray-700 dark:text-gray-200" />
@@ -121,7 +132,10 @@ function Header({ onMenuClick }) {
         )}
         <div className="flex items-center space-x-4 relative z-50">
           <button
-            onClick={() => navigate("/chat", { state: {} })}
+            onClick={() => {
+              navigate("/chat", { state: {} });
+              trigger([{ duration: 10 }], { intensity: 1 });
+            }}
             className="text-2xl font-bold relative"
           >
             Ping
@@ -132,7 +146,10 @@ function Header({ onMenuClick }) {
         <div className="relative z-50" ref={menuRef}>
           {/* Profile section: current user's avatar and username */}
           <button
-            onClick={() => setMenuOpen((prev) => !prev)}
+            onClick={() => {
+              setMenuOpen((prev) => !prev);
+              trigger([{ duration: 10 }], { intensity: 1 });
+            }}
             className="flex items-center justify-center p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             title="Profile Menu"
           >
@@ -169,28 +186,40 @@ function Header({ onMenuClick }) {
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50">
               <button
-                onClick={handleCreateChat}
+                onClick={() => {
+                  handleCreateChat();
+                  trigger([{ duration: 10 }], { intensity: 1 });
+                }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <FiPlus className="mr-2" size={24} />
                 <span>Create Chat</span>
               </button>
               <button
-                onClick={handleOpenChangeAvatar}
+                onClick={() => {
+                  handleOpenChangeAvatar();
+                  trigger([{ duration: 10 }], { intensity: 1 });
+                }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <FiCamera className="mr-2" size={20} />
                 <span>Change Avatar</span>
               </button>
               <button
-                onClick={handleOpenChangeUsername}
+                onClick={() => {
+                  handleOpenChangeUsername();
+                  trigger([{ duration: 10 }], { intensity: 1 });
+                }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <FiUser className="mr-2" size={20} />
                 <span>Change Username</span>
               </button>
               <button
-                onClick={toggleDarkMode}
+                onClick={() => {
+                  toggleDarkMode();
+                  trigger([{ duration: 10 }], { intensity: 1 });
+                }}
                 className="w-full flex items-center text-left px-2 py-2 dark:border-gray-700 transition-all"
               >
                 {darkMode ? (
@@ -201,7 +230,10 @@ function Header({ onMenuClick }) {
                 <span className="pl-2">Change Theme</span>
               </button>
               <button
-                onClick={handleLogout}
+                onClick={() => {
+                  handleLogout();
+                  trigger([{ duration: 10 }], { intensity: 1 });
+                }}
                 className="w-full flex items-center text-left px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <FiLogOut className="mr-2" size={16} />
@@ -246,13 +278,19 @@ function Header({ onMenuClick }) {
             />
             <div className="flex justify-end space-x-3">
               <button
-                onClick={() => setShowChangeUsernameModal(false)}
+                onClick={() => {
+                  setShowChangeUsernameModal(false);
+                  trigger([{ duration: 10 }], { intensity: 1 });
+                }}
                 className="px-6 py-3 rounded-xl font-bold text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={handleUpdateUsername}
+                onClick={() => {
+                  handleUpdateUsername();
+                  trigger([{ duration: 10 }], { intensity: 1 });
+                }}
                 className="px-6 py-3 bg-[#2196F3] hover:bg-[#1976D2] text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 active:scale-[0.98]"
               >
                 Save
