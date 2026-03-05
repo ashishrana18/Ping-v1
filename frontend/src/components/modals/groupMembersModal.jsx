@@ -6,12 +6,15 @@ import api from "../../services/api.js";
 import { FiX } from "react-icons/fi";
 import { FaArrowRight } from "react-icons/fa";
 import AvatarComponent from "../utils/avatar.jsx";
+import { useAppHaptics } from "../../utils/useAppHaptics.js";
 
 const GroupMembersModal = ({ members, onClose }) => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { triggerClick, triggerError, triggerSelection } = useAppHaptics();
 
   const handleDirectChatClick = async (member) => {
+    triggerSelection();
     onClose();
     const newChatId = [user.id, member.id].sort().join("");
     try {
@@ -25,6 +28,7 @@ const GroupMembersModal = ({ members, onClose }) => {
       });
     } catch (error) {
       console.error("Error creating direct chat:", error);
+      triggerError();
     }
   };
 
@@ -33,7 +37,10 @@ const GroupMembersModal = ({ members, onClose }) => {
       <div className="relative bg-white dark:bg-gray-800 p-6 rounded-[2rem] shadow-lg w-full max-w-sm max-h-[80vh] overflow-y-auto">
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={() => {
+            onClose();
+            triggerClick();
+          }}
           className="absolute top-4 right-4 p-2 text-gray-600 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
           title="Close"
         >

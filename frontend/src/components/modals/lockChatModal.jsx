@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api.js";
 import { FiLock, FiUnlock, FiX } from "react-icons/fi";
+import { useAppHaptics } from "../../utils/useAppHaptics.js";
 
 export const LockChatModal = ({ isOpen, onClose, chat, onUpdate }) => {
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const { triggerError } = useAppHaptics();
 
   useEffect(() => {
     if (isOpen) setIsVisible(true);
@@ -26,6 +28,7 @@ export const LockChatModal = ({ isOpen, onClose, chat, onUpdate }) => {
     setError("");
 
     if (passcode.length !== 4) {
+      triggerError();
       setError("Passcode must be 4 digits");
       return;
     }
@@ -51,6 +54,7 @@ export const LockChatModal = ({ isOpen, onClose, chat, onUpdate }) => {
       }
       handleClose();
     } catch (err) {
+      triggerError();
       setError(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);

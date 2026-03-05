@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAppHaptics } from "../../utils/useAppHaptics.js";
 import api from "../../services/api.js";
 
 import AvatarComponent from "../utils/avatar.jsx";
@@ -9,6 +10,7 @@ function AllChats() {
   const location = useLocation();
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { triggerClick, triggerError } = useAppHaptics();
 
   useEffect(() => {
     api
@@ -31,6 +33,7 @@ function AllChats() {
       })
       .catch((error) => {
         console.error("Error fetching chats:", error);
+        triggerError();
       })
       .finally(() => setLoading(false));
   }, [location.state?.chat?.id]);
@@ -79,6 +82,7 @@ function AllChats() {
                 to="/chat"
                 state={{ chat: object.chat, friend: object.friend }}
                 key={`${object.chat.id}-${index}`}
+                onClick={() => triggerClick()}
                 className={`group flex items-center p-3 rounded-2xl transition-all duration-300 relative
                 ${
                   location.state?.chat?.id === object.chat.id

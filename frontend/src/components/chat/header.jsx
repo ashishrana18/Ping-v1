@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 import { AuthContext } from "../../services/authContext.jsx";
 import { ChangeAvatarModal } from "../modals/changeAvatarModal.jsx";
-import { WinterTheme, SantaCap } from "../../themes/winter/winterTheme.jsx";
 
 import { FiPlus, FiCamera, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import AvatarComponent from "../utils/avatar.jsx";
 import { Skeleton } from "primereact/skeleton";
+import { useAppHaptics } from "../../utils/useAppHaptics.js";
 
 function Header({ onMenuClick }) {
   const { user, setUser, loading } = useContext(AuthContext);
@@ -20,6 +20,7 @@ function Header({ onMenuClick }) {
   const menuRef = useRef(null);
   const [darkMode, setDarkMode] = useState(false);
   const [error, setError] = useState("");
+  const { triggerClick, triggerError } = useAppHaptics();
 
   // Check local storage for theme preference on initial load and apply dark mode if set
   // This runs only once when the component mounts
@@ -98,6 +99,7 @@ function Header({ onMenuClick }) {
     } catch (err) {
       const message = err.response.data.message;
       setError(message);
+      triggerError();
     }
   };
 
@@ -106,14 +108,13 @@ function Header({ onMenuClick }) {
   return (
     <>
       <header className="sticky top-0 z-50 p-4 border-b bg-white dark:bg-gray-900 dark:text-primary flex justify-between items-center relative">
-        {/* Temporary Winter Theme - Remove after winter season */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <WinterTheme />
-        </div>
         {onMenuClick && (
           <button
+            onClick={() => {
+              onMenuClick();
+              triggerClick();
+            }}
             className="md:hidden p-2 mr-2 relative z-50"
-            onClick={onMenuClick}
             aria-label="Toggle sidebar"
           >
             <FiMenu className="h-6 w-6 text-gray-700 dark:text-gray-200" />
@@ -121,18 +122,22 @@ function Header({ onMenuClick }) {
         )}
         <div className="flex items-center space-x-4 relative z-50">
           <button
-            onClick={() => navigate("/chat", { state: {} })}
+            onClick={() => {
+              navigate("/chat", { state: {} });
+              triggerClick();
+            }}
             className="text-2xl font-bold relative"
           >
             Ping
-            {/* Temporary Winter Theme - Remove after winter season */}
-            <SantaCap />
           </button>
         </div>
         <div className="relative z-50" ref={menuRef}>
           {/* Profile section: current user's avatar and username */}
           <button
-            onClick={() => setMenuOpen((prev) => !prev)}
+            onClick={() => {
+              setMenuOpen((prev) => !prev);
+              triggerClick();
+            }}
             className="flex items-center justify-center p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             title="Profile Menu"
           >
@@ -169,28 +174,40 @@ function Header({ onMenuClick }) {
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50">
               <button
-                onClick={handleCreateChat}
+                onClick={() => {
+                  handleCreateChat();
+                  triggerClick();
+                }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <FiPlus className="mr-2" size={24} />
                 <span>Create Chat</span>
               </button>
               <button
-                onClick={handleOpenChangeAvatar}
+                onClick={() => {
+                  handleOpenChangeAvatar();
+                  triggerClick();
+                }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <FiCamera className="mr-2" size={20} />
                 <span>Change Avatar</span>
               </button>
               <button
-                onClick={handleOpenChangeUsername}
+                onClick={() => {
+                  handleOpenChangeUsername();
+                  triggerClick();
+                }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <FiUser className="mr-2" size={20} />
                 <span>Change Username</span>
               </button>
               <button
-                onClick={toggleDarkMode}
+                onClick={() => {
+                  toggleDarkMode();
+                  triggerClick();
+                }}
                 className="w-full flex items-center text-left px-2 py-2 dark:border-gray-700 transition-all"
               >
                 {darkMode ? (
@@ -201,7 +218,10 @@ function Header({ onMenuClick }) {
                 <span className="pl-2">Change Theme</span>
               </button>
               <button
-                onClick={handleLogout}
+                onClick={() => {
+                  handleLogout();
+                  triggerClick();
+                }}
                 className="w-full flex items-center text-left px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <FiLogOut className="mr-2" size={16} />
@@ -246,13 +266,19 @@ function Header({ onMenuClick }) {
             />
             <div className="flex justify-end space-x-3">
               <button
-                onClick={() => setShowChangeUsernameModal(false)}
+                onClick={() => {
+                  setShowChangeUsernameModal(false);
+                  triggerClick();
+                }}
                 className="px-6 py-3 rounded-xl font-bold text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={handleUpdateUsername}
+                onClick={() => {
+                  handleUpdateUsername();
+                  triggerClick();
+                }}
                 className="px-6 py-3 bg-[#2196F3] hover:bg-[#1976D2] text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 active:scale-[0.98]"
               >
                 Save

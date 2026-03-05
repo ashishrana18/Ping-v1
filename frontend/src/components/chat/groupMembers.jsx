@@ -8,11 +8,13 @@ import AvatarComponent from "../utils/avatar.jsx";
 
 import { Avatar } from "primereact/avatar";
 import { AvatarGroup } from "primereact/avatargroup";
+import { useAppHaptics } from "../../utils/useAppHaptics.js";
 
 function GroupMembers({ chat }) {
   const [groupMembers, setGroupMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
+  const { triggerClick, triggerError } = useAppHaptics();
 
   useEffect(() => {
     // reset when chat changes
@@ -27,6 +29,7 @@ function GroupMembers({ chat }) {
         })
         .catch((error) => {
           console.log(error);
+          triggerError();
         })
         .finally(() => {
           setLoading(false);
@@ -38,6 +41,7 @@ function GroupMembers({ chat }) {
 
   const handleOpenMembers = () => {
     setShowAll(true);
+    triggerClick();
   };
 
   return (
