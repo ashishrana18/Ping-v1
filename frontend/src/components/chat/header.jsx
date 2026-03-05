@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 import { AuthContext } from "../../services/authContext.jsx";
 import { ChangeAvatarModal } from "../modals/changeAvatarModal.jsx";
-import { WinterTheme, SantaCap } from "../../themes/winter/winterTheme.jsx";
 
 import { FiPlus, FiCamera, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
@@ -109,10 +108,6 @@ function Header({ onMenuClick }) {
   return (
     <>
       <header className="sticky top-0 z-50 p-4 border-b bg-white dark:bg-gray-900 dark:text-primary flex justify-between items-center relative">
-        {/* Temporary Winter Theme - Remove after winter season */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <WinterTheme />
-        </div>
         {onMenuClick && (
           <button
             onClick={() => {
@@ -134,8 +129,6 @@ function Header({ onMenuClick }) {
             className="text-2xl font-bold relative"
           >
             Ping
-            {/* Temporary Winter Theme - Remove after winter season */}
-            <SantaCap />
           </button>
         </div>
         <div className="relative z-50" ref={menuRef}>
