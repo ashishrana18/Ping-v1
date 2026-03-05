@@ -5,7 +5,7 @@ export const HAPTIC_CONFIGS = {
       { delay: 40, duration: 40 },
       { delay: 40, duration: 40 },
     ],
-    options: { intensity: 0.9 },
+    options: { intensity: 1.2 },
   },
   CLICK: {
     pattern: [{ duration: 35 }],
