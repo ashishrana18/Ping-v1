@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 
 import AvatarComponent from "../utils/avatar.jsx";
+import { useAppHaptics } from "../../utils/useAppHaptics.js";
 
 function CreateChat({ currentUserId }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,6 +13,7 @@ function CreateChat({ currentUserId }) {
   const [groupMembers, setGroupMembers] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const navigate = useNavigate();
+  const { triggerClick, triggerError, triggerSelection } = useAppHaptics();
 
   // Fetch search results when the user types
   useEffect(() => {
@@ -21,6 +23,7 @@ function CreateChat({ currentUserId }) {
         .then(({ data }) => setSearchResults(data.data))
         .catch((error) => {
           console.error("Error searching:", error);
+          triggerError();
           setSearchResults({ groups: [], users: [] });
         });
     } else {
@@ -49,6 +52,7 @@ function CreateChat({ currentUserId }) {
   // Handle click on a direct chat result
   const handleDirectChatClick = async (friend) => {
     const newChatId = [currentUserId, friend.id].sort().join("");
+    triggerClick();
     try {
       const response = await api.post("/chat/create", {
         chatId: newChatId,
@@ -58,6 +62,7 @@ function CreateChat({ currentUserId }) {
       navigate("/chat", { state: { chat: response.data.data, friend } });
     } catch (error) {
       console.error("Error creating direct chat:", error);
+      triggerError();
     }
   };
 
@@ -67,9 +72,11 @@ function CreateChat({ currentUserId }) {
     // Simply navigate to the chat page.
     if (group && group.id) {
       console.log(group.name);
+      triggerClick();
       navigate("/chat", { state: { chat: group } });
     } else {
       console.error("Invalid group data");
+      triggerError();
     }
   };
 
@@ -77,6 +84,7 @@ function CreateChat({ currentUserId }) {
   const handleCreateGroupChat = async () => {
     if (groupMembers.length === 0) {
       console.error("No group members selected");
+      triggerError();
       return;
     }
     const groupName = prompt("Enter group name:");
@@ -90,6 +98,7 @@ function CreateChat({ currentUserId }) {
       navigate("/chat", { state: { chat: response.data.data } });
     } catch (error) {
       console.error("Error creating group chat:", error);
+      triggerError();
     }
   };
 
@@ -167,7 +176,10 @@ function CreateChat({ currentUserId }) {
             searchResults.users.map((user) => (
               <div
                 key={user.id}
-                onClick={() => addGroupMember(user)}
+                onClick={() => {
+                  triggerSelection();
+                  addGroupMember(user);
+                }}
                 className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 hover:rounded-md dark:hover:bg-gray-600 transition-colors"
               >
                 <AvatarComponent
@@ -197,7 +209,10 @@ function CreateChat({ currentUserId }) {
                 {groupMembers.map((member) => (
                   <div
                     key={member.id}
-                    onClick={() => removeGroupMember(member)}
+                    onClick={() => {
+                      triggerSelection();
+                      removeGroupMember(member);
+                    }}
                     className="flex items-center p-2 border-b cursor-pointer hover:bg-blue-100 hover:rounded-md dark:hover:bg-gray-600 transition-colors"
                   >
                     <AvatarComponent
@@ -221,7 +236,10 @@ function CreateChat({ currentUserId }) {
             </div>
           )}
           <button
-            onClick={handleCreateGroupChat}
+            onClick={() => {
+              triggerClick();
+              handleCreateGroupChat();
+            }}
             className="mt-4 p-2 border rounded-md bg-blue-500 text-white"
           >
             Create Group Chat
@@ -230,7 +248,10 @@ function CreateChat({ currentUserId }) {
       )}
 
       <button
-        onClick={handleToggle}
+        onClick={() => {
+          triggerClick();
+          handleToggle();
+        }}
         className="mt-2 p-2 border rounded-md bg-gray-200 dark:bg-slate-950"
       >
         Switch to {chatType === "direct" ? "Group Chat" : "Direct Chat"}

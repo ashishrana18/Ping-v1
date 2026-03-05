@@ -10,6 +10,7 @@ import { LockChatModal } from "../modals/lockChatModal.jsx";
 import { FiLock } from "react-icons/fi";
 import AvatarComponent from "../utils/avatar.jsx";
 import { Skeleton } from "primereact/skeleton";
+import { useAppHaptics } from "../../utils/useAppHaptics.js";
 
 function SingleChat({ chat, friend, onUpdateChat }) {
   const { user } = useContext(AuthContext);
@@ -24,6 +25,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
   const [reactionsPopup, setReactionsPopup] = useState(null);
   const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(true);
+  const { triggerClick, triggerError } = useAppHaptics();
 
   useEffect(() => {
     if (chat && chat.id && currentUserId) {
@@ -56,7 +58,10 @@ function SingleChat({ chat, friend, onUpdateChat }) {
             setMessages(response.data.data);
           }
         })
-        .catch((err) => console.error("Error fetching messages:", err))
+        .catch((err) => {
+          console.error("Error fetching messages:", err);
+          triggerError();
+        })
         .finally(() => setLoadingMessages(false));
     }
   }, [chat]);
@@ -85,6 +90,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
         senderId: currentUserId,
       });
       setInput("");
+      triggerClick();
       // Optionally scroll after sending
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
@@ -167,6 +173,7 @@ function SingleChat({ chat, friend, onUpdateChat }) {
       });
     } catch (err) {
       console.error("Failed to react:", err);
+      triggerError();
     }
   };
 

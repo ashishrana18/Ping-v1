@@ -9,7 +9,7 @@ import { FiPlus, FiCamera, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import AvatarComponent from "../utils/avatar.jsx";
 import { Skeleton } from "primereact/skeleton";
-import { useWebHaptics } from "web-haptics/react";
+import { useAppHaptics } from "../../utils/useAppHaptics.js";
 
 function Header({ onMenuClick }) {
   const { user, setUser, loading } = useContext(AuthContext);
@@ -21,6 +21,7 @@ function Header({ onMenuClick }) {
   const menuRef = useRef(null);
   const [darkMode, setDarkMode] = useState(false);
   const [error, setError] = useState("");
+  const { triggerClick, triggerError } = useAppHaptics();
 
   // Check local storage for theme preference on initial load and apply dark mode if set
   // This runs only once when the component mounts
@@ -99,17 +100,11 @@ function Header({ onMenuClick }) {
     } catch (err) {
       const message = err.response.data.message;
       setError(message);
+      triggerError();
     }
   };
 
   const profilePicture = user && user.avatar ? user.avatar : null;
-
-  const { trigger } = useWebHaptics({
-    options: {
-      enableVibrations: true,
-      enableAudio: true,
-    },
-  });
 
   return (
     <>
@@ -122,7 +117,7 @@ function Header({ onMenuClick }) {
           <button
             onClick={() => {
               onMenuClick();
-              trigger([{ duration: 10 }], { intensity: 1 });
+              triggerClick();
             }}
             className="md:hidden p-2 mr-2 relative z-50"
             aria-label="Toggle sidebar"
@@ -134,7 +129,7 @@ function Header({ onMenuClick }) {
           <button
             onClick={() => {
               navigate("/chat", { state: {} });
-              trigger([{ duration: 10 }], { intensity: 1 });
+              triggerClick();
             }}
             className="text-2xl font-bold relative"
           >
@@ -148,7 +143,7 @@ function Header({ onMenuClick }) {
           <button
             onClick={() => {
               setMenuOpen((prev) => !prev);
-              trigger([{ duration: 10 }], { intensity: 1 });
+              triggerClick();
             }}
             className="flex items-center justify-center p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             title="Profile Menu"
@@ -188,7 +183,7 @@ function Header({ onMenuClick }) {
               <button
                 onClick={() => {
                   handleCreateChat();
-                  trigger([{ duration: 10 }], { intensity: 1 });
+                  triggerClick();
                 }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
@@ -198,7 +193,7 @@ function Header({ onMenuClick }) {
               <button
                 onClick={() => {
                   handleOpenChangeAvatar();
-                  trigger([{ duration: 10 }], { intensity: 1 });
+                  triggerClick();
                 }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
@@ -208,7 +203,7 @@ function Header({ onMenuClick }) {
               <button
                 onClick={() => {
                   handleOpenChangeUsername();
-                  trigger([{ duration: 10 }], { intensity: 1 });
+                  triggerClick();
                 }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
@@ -218,7 +213,7 @@ function Header({ onMenuClick }) {
               <button
                 onClick={() => {
                   toggleDarkMode();
-                  trigger([{ duration: 10 }], { intensity: 1 });
+                  triggerClick();
                 }}
                 className="w-full flex items-center text-left px-2 py-2 dark:border-gray-700 transition-all"
               >
@@ -232,7 +227,7 @@ function Header({ onMenuClick }) {
               <button
                 onClick={() => {
                   handleLogout();
-                  trigger([{ duration: 10 }], { intensity: 1 });
+                  triggerClick();
                 }}
                 className="w-full flex items-center text-left px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
@@ -280,7 +275,7 @@ function Header({ onMenuClick }) {
               <button
                 onClick={() => {
                   setShowChangeUsernameModal(false);
-                  trigger([{ duration: 10 }], { intensity: 1 });
+                  triggerClick();
                 }}
                 className="px-6 py-3 rounded-xl font-bold text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors"
               >
@@ -289,7 +284,7 @@ function Header({ onMenuClick }) {
               <button
                 onClick={() => {
                   handleUpdateUsername();
-                  trigger([{ duration: 10 }], { intensity: 1 });
+                  triggerClick();
                 }}
                 className="px-6 py-3 bg-[#2196F3] hover:bg-[#1976D2] text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 active:scale-[0.98]"
               >

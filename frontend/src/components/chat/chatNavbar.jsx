@@ -15,7 +15,7 @@ import {
   FiMoreVertical,
   FiUnlock,
 } from "react-icons/fi";
-import { useWebHaptics } from "web-haptics/react";
+import { useAppHaptics } from "../../utils/useAppHaptics.js";
 
 function ChatNavbar({ chat, friend, onUpdateChat }) {
   const { setUser } = useContext(AuthContext);
@@ -29,12 +29,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
   const [showLockChatModal, setShowLockChatModal] = useState(false);
   const menuRef = useRef(null);
 
-  const { trigger } = useWebHaptics({
-    options: {
-      enableVibrations: true,
-      enableAudio: true,
-    },
-  });
+  const { triggerClick, triggerError } = useAppHaptics();
 
   // Update local chat state when the prop changes
   useEffect(() => {
@@ -48,6 +43,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
         setOnlineStatus(response.data);
       } catch (error) {
         console.error("Error fetching online status:", error);
+        triggerError();
       }
     }
     if (friend && friend.id) {
@@ -127,7 +123,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
           <button
             onClick={() => {
               setDropdownOpen((prev) => !prev);
-              trigger([{ duration: 10 }], { intensity: 1 });
+              triggerClick();
             }}
             className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
             title="Options"
@@ -140,7 +136,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
                 onClick={() => {
                   setShowViewAvatarModal(true);
                   setDropdownOpen(false);
-                  trigger([{ duration: 10 }], { intensity: 1 });
+                  triggerClick();
                 }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
@@ -151,7 +147,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
                 <button
                   onClick={() => {
                     handleOpenChangeAvatar();
-                    trigger([{ duration: 10 }], { intensity: 1 });
+                    triggerClick();
                   }}
                   className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                 >
@@ -162,7 +158,7 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
                 <button
                   onClick={() => {
                     handleStartSecretChat();
-                    trigger([{ duration: 10 }], { intensity: 1 });
+                    triggerClick();
                   }}
                   className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                 >
@@ -174,18 +170,22 @@ function ChatNavbar({ chat, friend, onUpdateChat }) {
                 onClick={() => {
                   setShowLockChatModal(true);
                   setDropdownOpen(false);
-                  trigger([{ duration: 10 }], { intensity: 1 });
+                  triggerClick();
                 }}
                 className="w-full flex items-center text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500"
               >
                 {currentChat?.isLocked ? (
-                  <FiUnlock className="mr-2" size={20} onClick={() => {
-                    trigger([{ duration: 10 }], { intensity: 1 });
-                  }} />
+                  <FiUnlock
+                    className="mr-2"
+                    size={20}
+                    onClick={() => triggerClick()}
+                  />
                 ) : (
-                  <FiLock className="mr-2" size={20} onClick={() => {
-                    trigger([{ duration: 10 }], { intensity: 1 });
-                  }} />
+                  <FiLock
+                    className="mr-2"
+                    size={20}
+                    onClick={() => triggerClick()}
+                  />
                 )}
                 <span>
                   {currentChat?.isLocked ? "Unlock Chat" : "Lock Chat"}
